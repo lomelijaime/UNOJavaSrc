@@ -5,22 +5,28 @@
  */
 package unodistribuido;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author J1m10
  */
-public class Splash extends javax.swing.JFrame {
-
-    /**
-     * Creates new form Splash
-     */
-        private Micronucleo  micronucleo;
+public class Splash extends javax.swing.JFrame implements Runnable {
+    Thread t;
+    private Micronucleo  micronucleo;
+    
     public Splash() {
         initComponents();
-        this.micronucleo=micronucleo;
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        this.setLocationRelativeTo(micronucleo);
-         setVisible(true);
+    }
+    public void run(){
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
+        try {
+            t.sleep(5000);
+        } catch (InterruptedException ex) {}
+        this.dispose();
+        new Micronucleo();
     }
 
     /**
@@ -33,6 +39,7 @@ public class Splash extends javax.swing.JFrame {
     private void initComponents() {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
