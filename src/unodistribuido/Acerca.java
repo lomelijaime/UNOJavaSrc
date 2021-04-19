@@ -57,6 +57,7 @@ public class Acerca extends javax.swing.JFrame {
         setBackground(new java.awt.Color(0, 204, 153));
         setForeground(new java.awt.Color(153, 255, 204));
         setName("Sobre nosotros"); // NOI18N
+        setUndecorated(true);
 
         btnRegresar_opciones2.setFont(new java.awt.Font("Tahoma", 3, 11)); // NOI18N
         btnRegresar_opciones2.setText("Regresar");
@@ -242,9 +243,7 @@ public class Acerca extends javax.swing.JFrame {
                         .addComponent(lblFotoRowena1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(0, 0, 0))
+                            .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()

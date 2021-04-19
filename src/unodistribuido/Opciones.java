@@ -2,11 +2,16 @@
 package unodistribuido;
 
 import java.awt.Color;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 
 public class Opciones extends javax.swing.JFrame {
 
     private Micronucleo  micronucleo;
+    private Point initialClick;
     public Opciones(Micronucleo micronucleo) {
         
         initComponents();
@@ -15,12 +20,41 @@ public class Opciones extends javax.swing.JFrame {
         this.setLocationRelativeTo(micronucleo);
          setVisible(true);
          this.getContentPane().setBackground(Color.orange);
+         
+         addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                initialClick = e.getPoint();
+                getComponentAt(initialClick);
+            }
+        });
+        
+        addMouseMotionListener(new MouseMotionAdapter() {
+        @Override
+        public void mouseDragged(MouseEvent e) {
+
+            // get location of Window
+            int thisX = getMe().getLocation().x;
+            int thisY = getMe().getLocation().y;
+
+            // Determine how much the mouse moved since the initial click
+            int xMoved = e.getX() - initialClick.x;
+            int yMoved = e.getY() - initialClick.y;
+
+            // Move window to this position
+            int X = thisX + xMoved;
+            int Y = thisY + yMoved;
+            getMe().setLocation(X, Y);
+        }
+    });
     }
 
     private Opciones getMe()
     {
         return this;
     }
+    
+    
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -35,6 +69,7 @@ public class Opciones extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Menu de opciones");
+        setUndecorated(true);
 
         btnAcerca.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         btnAcerca.setText("Acerca de");
