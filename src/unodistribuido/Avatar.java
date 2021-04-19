@@ -21,7 +21,7 @@ public class Avatar extends javax.swing.JDialog {
     private Micronucleo  micronucleo;
     private int avatar;
     private Point initialClick;
-    private String[] nombres={"KAREN","ANGEL","ALLAN","MARIA","ROSA","LUIS"};
+    private String[] nombres={"JOEL","JENNIE","OSVALDO","YOLANDA","DIANA","MARIO"};
 
     public Avatar(Micronucleo micronucleo) {
         initComponents();
@@ -32,7 +32,7 @@ public class Avatar extends javax.swing.JDialog {
         this.setLocationRelativeTo(micronucleo);
         setVisible(true);
         cargaImg();
-        lblNick.setText("KAREN");
+        lblNick.setText("JOEL");
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 initialClick = e.getPoint();
