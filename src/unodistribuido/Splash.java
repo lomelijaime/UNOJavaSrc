@@ -7,6 +7,7 @@ package unodistribuido;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -45,6 +46,7 @@ public class Splash extends javax.swing.JFrame implements Runnable {
         lblFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setIconImage(new ImageIcon(getClass().getResource("imagenes/fondos/logo.png")).getImage());
         setUndecorated(true);
         setPreferredSize(new java.awt.Dimension(716, 358));
         setResizable(false);
