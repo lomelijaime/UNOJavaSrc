@@ -83,7 +83,7 @@ public class Acerca extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Verdana", 2, 14)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Maria Rowena Lopez Vazquez");
+        jLabel1.setText("Maria Rowena López Vázquez");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -102,7 +102,7 @@ public class Acerca extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Verdana", 2, 14)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Desarrollo de software 8F1");
+        jLabel2.setText("17300584");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -134,7 +134,7 @@ public class Acerca extends javax.swing.JFrame {
 
         jLabel4.setFont(new java.awt.Font("Verdana", 2, 14)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("Desarrollo de software 8F1");
+        jLabel4.setText("17300580");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -166,7 +166,7 @@ public class Acerca extends javax.swing.JFrame {
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 2, 14)); // NOI18N
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel6.setText("Desarrollo de software 8F1");
+        jLabel6.setText("16300837");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -181,7 +181,7 @@ public class Acerca extends javax.swing.JFrame {
 
         jLabel7.setFont(new java.awt.Font("Verdana", 2, 14)); // NOI18N
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel7.setText("    Desarrollo de software 8F1");
+        jLabel7.setText("17300666");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
