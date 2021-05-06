@@ -56,19 +56,19 @@ public class Splash extends javax.swing.JFrame implements Runnable {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("8F1");
         getContentPane().add(jLabel1);
-        jLabel1.setBounds(320, 300, 65, 58);
+        jLabel1.setBounds(320, 290, 65, 58);
 
         jLabel2.setFont(new java.awt.Font("Yu Gothic", 1, 36)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Plantel Tonalá");
         getContentPane().add(jLabel2);
-        jLabel2.setBounds(0, 300, 252, 58);
+        jLabel2.setBounds(10, 290, 252, 58);
 
         jLabel3.setFont(new java.awt.Font("Yu Gothic", 1, 36)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Primavera 2021");
         getContentPane().add(jLabel3);
-        jLabel3.setBounds(440, 300, 272, 58);
+        jLabel3.setBounds(430, 290, 272, 58);
 
         jLabel4.setFont(new java.awt.Font("Yu Gothic", 1, 36)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));

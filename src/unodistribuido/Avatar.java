@@ -90,7 +90,7 @@ public class Avatar extends javax.swing.JDialog {
         });
         getContentPane().setLayout(null);
 
-        btnCerrar.setBackground(new java.awt.Color(255, 102, 0));
+        btnCerrar.setBackground(new java.awt.Color(230, 7, 12));
         btnCerrar.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         btnCerrar.setForeground(new java.awt.Color(255, 255, 255));
         btnCerrar.setText("Cerrar");
@@ -106,7 +106,7 @@ public class Avatar extends javax.swing.JDialog {
         getContentPane().add(lblFoto);
         lblFoto.setBounds(180, 50, 91, 91);
 
-        btnCrear.setBackground(new java.awt.Color(255, 102, 0));
+        btnCrear.setBackground(new java.awt.Color(230, 7, 12));
         btnCrear.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         btnCrear.setForeground(new java.awt.Color(255, 255, 255));
         btnCrear.setText("Crear");
@@ -118,7 +118,7 @@ public class Avatar extends javax.swing.JDialog {
         getContentPane().add(btnCrear);
         btnCrear.setBounds(20, 80, 90, 30);
 
-        btnDer.setBackground(new java.awt.Color(255, 102, 0));
+        btnDer.setBackground(new java.awt.Color(230, 7, 12));
         btnDer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/otros/der.png"))); // NOI18N
         btnDer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -128,7 +128,7 @@ public class Avatar extends javax.swing.JDialog {
         getContentPane().add(btnDer);
         btnDer.setBounds(280, 80, 30, 30);
 
-        btnIzq.setBackground(new java.awt.Color(255, 102, 0));
+        btnIzq.setBackground(new java.awt.Color(230, 7, 12));
         btnIzq.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/otros/izq.png"))); // NOI18N
         btnIzq.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

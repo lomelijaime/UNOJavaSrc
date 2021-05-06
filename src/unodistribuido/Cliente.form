@@ -291,7 +291,7 @@
         <Component class="javax.swing.JButton" name="btnConectar">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="0" green="6d" red="ff" type="rgb"/>
+              <Color blue="c" green="7" red="e6" type="rgb"/>
             </Property>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Britannic Bold" size="12" style="1"/>

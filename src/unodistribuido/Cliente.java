@@ -78,7 +78,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
     private Point initialClick;
     private String[] nombresCol= {"Avatar", "Nombre", "# Cartas"};
     private DefaultTableModel modelo;
-    private String[] nombres={"KAREN","ANGEL","ALLAN","MARIA","ROSA","LUIS"};
+    private String[] nombres={"JOEL","JENNIE","OSVALDO","YOLANDA","DIANA","MARIO"};
     private ArrayList<CartaGrafica> cartas;
     private boolean banGrito;
    
@@ -263,7 +263,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         pnlServidor.add(txtID);
         txtID.setBounds(130, 70, 110, 20);
 
-        btnConectar.setBackground(new java.awt.Color(255, 109, 0));
+        btnConectar.setBackground(new java.awt.Color(230, 7, 12));
         btnConectar.setFont(new java.awt.Font("Britannic Bold", 1, 12)); // NOI18N
         btnConectar.setForeground(new java.awt.Color(255, 255, 255));
         btnConectar.setText("Conectar");

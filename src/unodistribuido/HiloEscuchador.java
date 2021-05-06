@@ -41,7 +41,7 @@ public class HiloEscuchador extends Thread
     private Micronucleo micronucleo;
     private int idProceso;
     
-    private String[] nombres={"KAREN","ANGEL","ALLAN","MARIA","ROSA","LUIS"};
+    private String[] nombres={"JOEL","JENNIE","OSVALDO","YOLANDA","DIANA","MARIO"};
    
     public HiloEscuchador(Cliente cliente,Micronucleo micronucleo)
     {
