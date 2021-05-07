@@ -282,7 +282,7 @@ public class Micronucleo extends javax.swing.JFrame
         setResizable(false);
         getContentPane().setLayout(null);
 
-        btnSalir.setBackground(new java.awt.Color(255, 102, 0));
+        btnSalir.setBackground(new java.awt.Color(230, 7, 12));
         btnSalir.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         btnSalir.setForeground(new java.awt.Color(255, 255, 255));
         btnSalir.setText("Salir!");
@@ -294,7 +294,7 @@ public class Micronucleo extends javax.swing.JFrame
         getContentPane().add(btnSalir);
         btnSalir.setBounds(500, 260, 190, 40);
 
-        btnCliente.setBackground(new java.awt.Color(255, 102, 0));
+        btnCliente.setBackground(new java.awt.Color(230, 7, 12));
         btnCliente.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         btnCliente.setForeground(new java.awt.Color(255, 255, 255));
         btnCliente.setText("Nuevo Jugador!");
@@ -306,7 +306,7 @@ public class Micronucleo extends javax.swing.JFrame
         getContentPane().add(btnCliente);
         btnCliente.setBounds(500, 50, 190, 40);
 
-        btnOpciones.setBackground(new java.awt.Color(255, 102, 0));
+        btnOpciones.setBackground(new java.awt.Color(230, 7, 12));
         btnOpciones.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         btnOpciones.setForeground(new java.awt.Color(255, 255, 255));
         btnOpciones.setText("Opciones!");
@@ -318,7 +318,7 @@ public class Micronucleo extends javax.swing.JFrame
         getContentPane().add(btnOpciones);
         btnOpciones.setBounds(500, 190, 190, 40);
 
-        btnServidor.setBackground(new java.awt.Color(255, 102, 0));
+        btnServidor.setBackground(new java.awt.Color(230, 7, 12));
         btnServidor.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         btnServidor.setForeground(new java.awt.Color(255, 255, 255));
         btnServidor.setText("Nueva Sala de Juego!");
@@ -369,13 +369,13 @@ public class Micronucleo extends javax.swing.JFrame
         );
 
         getContentPane().add(pnlRed);
-        pnlRed.setBounds(10, 10, 210, 71);
+        pnlRed.setBounds(10, 10, 210, 67);
 
         lblVersion.setFont(new java.awt.Font("Britannic Bold", 0, 14)); // NOI18N
         lblVersion.setForeground(new java.awt.Color(255, 255, 255));
         lblVersion.setText("VERSION 0.1 (Solo fines educativos)");
         getContentPane().add(lblVersion);
-        lblVersion.setBounds(20, 340, 240, 19);
+        lblVersion.setBounds(20, 340, 240, 15);
 
         lblFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/fondos/micronucleo.jpg"))); // NOI18N
         getContentPane().add(lblFondo);

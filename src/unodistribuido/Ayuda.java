@@ -10,8 +10,9 @@ public class Ayuda extends javax.swing.JFrame {
         
         initComponents();
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.getContentPane().setBackground(new Color(45,10,78));
         this.setLocationRelativeTo(micronucleo);
-         this.getContentPane().setBackground(Color.orange);
+         //this.getContentPane().setBackground(Color.orange);
 
     }
 
@@ -54,20 +55,27 @@ public class Ayuda extends javax.swing.JFrame {
         setResizable(false);
         setSize(new java.awt.Dimension(1010, 715));
 
-        jPanel1.setBackground(new java.awt.Color(255, 204, 51));
+        jPanel1.setBackground(new java.awt.Color(45, 10, 78));
+        jPanel1.setForeground(new java.awt.Color(255, 255, 255));
 
+        jLabel2.setBackground(null);
         jLabel2.setFont(new java.awt.Font("Yu Gothic UI Semibold", 2, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Objetivo del juego");
         jLabel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("<html>Se el primero en quedarte sin cartas¡¡¡ <br> Mientras impides con las cartas especiales <br> que otros los jugadores lo hagan<html>");
 
+        jLabel3.setBackground(null);
         jLabel3.setFont(new java.awt.Font("Yu Gothic UI Semibold", 2, 18)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Preparación");
         jLabel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("<html>1. Cada jugador escoge una carta; el jugador con el número<br> más alto reparte(las cartas\n" +
             " con símbolo cuentan como cero).<br>" +
             "2. Baraja las cartas y reparte 7 cartas a cada jugador.<br>" +
@@ -107,9 +115,12 @@ public class Ayuda extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel3.setBackground(new java.awt.Color(255, 204, 51));
+        jPanel3.setBackground(new java.awt.Color(45, 10, 78));
+        jPanel3.setForeground(new java.awt.Color(255, 255, 255));
 
+        jLabel5.setBackground(null);
         jLabel5.setFont(new java.awt.Font("Yu Gothic UI Semibold", 2, 18)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Preparación");
         jLabel5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -118,6 +129,7 @@ public class Ayuda extends javax.swing.JFrame {
         jLabel6.setText("jLabel6");
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("<html><b>Carta Roba 2:</b> cuando se tira esta carta, <br>el siguiente jugador roba dos\n" +
             "cartas y pierde su turno.<br> Esta carta sólo se puede descartar sobre una<br>" +
             "carta del mismo color o sobre otra carta Roba 2.<br> Si ésta es la primera\n" +
@@ -127,6 +139,7 @@ public class Ayuda extends javax.swing.JFrame {
         jLabel8.setText("jLabel8");
 
         jLabel9.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
         jLabel9.setText("<html><b>Carta Reversa:</b> cambia el sentido del juego. Si le tocara jugar al jugador<br>" +
             "de la izquierda de quien tira la carta, este jugador pierde su turno; en su<br>" +
             "lugar jugará la persona de la derecha, y el sentido se cambiará hacia la<br>" +
@@ -140,6 +153,7 @@ public class Ayuda extends javax.swing.JFrame {
         jLabel10.setText("jLabel10");
 
         jLabel11.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
         jLabel11.setText("<html><b>Carta Reversa:</b> cambia el sentido del juego.<br> Si le tocara jugar al jugador" +
             "de la izquierda de<br> quien tira la carta, este jugador pierde su turno; en su<br>" +
             "lugar jugará la persona de la derecha,<br> y el sentido se cambiará hacia la" +
@@ -152,6 +166,7 @@ public class Ayuda extends javax.swing.JFrame {
         jLabel16.setText("jLabel16");
 
         jLabel17.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        jLabel17.setForeground(new java.awt.Color(255, 255, 255));
         jLabel17.setText("<html><b>Carta Salta:</b> al jugador que le toque jugar pierde su turno <br>y tirará el\n" +
             "siguiente de acuerdo al sentido del juego.<br> Esta carta sólo se puede" +
             "descartar sobre una carta del mismo color<br> o sobre otra carta Salta. Si" +
@@ -162,6 +177,7 @@ public class Ayuda extends javax.swing.JFrame {
         jLabel18.setText("jLabel18");
 
         jLabel19.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        jLabel19.setForeground(new java.awt.Color(255, 255, 255));
         jLabel19.setText("<html><b>Carta Comodín Roba 4:</b> quien tira esta carta escoge su color<br> y hace que" +
             "el siguiente jugador robe 4 cartas de la pila <br> para ROBAR y pierda su" +
             "turno. <br>Nota: Esta carta solo se puede descartar si el jugador que la tiene<br>" +
@@ -171,6 +187,7 @@ public class Ayuda extends javax.swing.JFrame {
             "en número o acción<html>");
 
         jLabel14.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel14.setForeground(new java.awt.Color(255, 255, 255));
         jLabel14.setText("<html><b>NOTA:</b> si un jugador baja un Comodín Roba 4 ilegalmente<br>, (esto es, teniendo alguna\n" +
             "carta con el color que corresponda)<br> y alguien lo desafía a mostrar sus cartas, deberá" +
             "enseñar sus <br>cartas al jugador que lo desafió. Si es culpable, deberá robar 4 cartas.<br> No" +
@@ -251,14 +268,18 @@ public class Ayuda extends javax.swing.JFrame {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jPanel2.setBackground(new java.awt.Color(255, 204, 51));
+        jPanel2.setBackground(new java.awt.Color(45, 10, 78));
+        jPanel2.setForeground(new java.awt.Color(255, 255, 255));
 
+        jLabel12.setBackground(null);
         jLabel12.setFont(new java.awt.Font("Yu Gothic UI Semibold", 2, 18)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(255, 255, 255));
         jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel12.setText("¡A jugar!");
         jLabel12.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel13.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel13.setForeground(new java.awt.Color(255, 255, 255));
         jLabel13.setText("<html>El jugador a la izquierda del repartidor empieza.<br>" +
             "Cuando sea tu turno, haz coincidir una de las cartas de tu mano con la carta de hasta<br>" +
             "arriba de la pila para DESCARTAR, ya sea, por número, color o símbolo (los símbolos<br>" +
@@ -289,11 +310,14 @@ public class Ayuda extends javax.swing.JFrame {
                 .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jLabel15.setBackground(null);
         jLabel15.setFont(new java.awt.Font("Yu Gothic UI Semibold", 2, 18)); // NOI18N
+        jLabel15.setForeground(new java.awt.Color(255, 255, 255));
         jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel15.setText("Decir ¡UNO!");
         jLabel15.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
+        jLabel20.setForeground(new java.awt.Color(255, 255, 255));
         jLabel20.setText("<html>Cuando a un jugador le quede una sola carta,<br> tiene que decir en voz alta “UNO”. De lo" +
             "contrario, deberá<br> robar dos cartas de la pila para ROBAR. Esto sólo <br>es necesario en" +
             "caso de que uno de los jugadores<br> sorprenda al jugador saliente sin haber dicho “UNO”.<br>" +
@@ -305,7 +329,9 @@ public class Ayuda extends javax.swing.JFrame {
             "Si la pila para ROBAR se termina<br> y ningún jugador ha ganado, deja la última carta y<br>" +
             "revuelve el monto para voltearlo y <br>tener nuevamente una pila de donde robar.<html>");
 
-        btnRegresar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnRegresar.setBackground(new java.awt.Color(230, 7, 12));
+        btnRegresar.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnRegresar.setForeground(new java.awt.Color(255, 255, 255));
         btnRegresar.setText("Regresar");
         btnRegresar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

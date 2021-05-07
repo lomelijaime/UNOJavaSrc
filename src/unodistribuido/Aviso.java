@@ -67,7 +67,7 @@ public class Aviso extends javax.swing.JDialog {
         setResizable(false);
         getContentPane().setLayout(null);
 
-        btnCerrar.setBackground(new java.awt.Color(255, 102, 0));
+        btnCerrar.setBackground(new java.awt.Color(230, 7, 12));
         btnCerrar.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         btnCerrar.setForeground(new java.awt.Color(255, 255, 255));
         btnCerrar.setText("Cerrar");
