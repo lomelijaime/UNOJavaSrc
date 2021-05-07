@@ -31,17 +31,18 @@ import java.util.StringTokenizer;
  * 13: Peticion del cliente para solicitar grito de UNO!
  * 14: Orden de gritar UNO! en cliente
  * 15: Cancelacion del voto de inicio de partida
+ * 16: Actualizacion tabla de votos en cliente
  * 
 */
 
 
 public class HiloEscuchador extends Thread 
 {
-    private Cliente cliente;
-    private Micronucleo micronucleo;
-    private int idProceso;
+    private final Cliente cliente;
+    private final Micronucleo micronucleo;
+    private final int idProceso;
     
-    private String[] nombres={"JOEL","JENNIE","OSVALDO","YOLANDA","DIANA","MARIO"};
+    private final String[] nombres={"KAREN","ANGEL","ALLAN","MARIA","ROSA","LUIS"};
    
     public HiloEscuchador(Cliente cliente,Micronucleo micronucleo)
     {
@@ -70,7 +71,7 @@ public class HiloEscuchador extends Thread
                     while(st.hasMoreTokens())
                     {
                         String tmp=st.nextToken();
-                        cliente.agregaJugador(tmp.trim(),nombres[Integer.parseInt(tmp.trim())-1]) ;
+                        cliente.agregaJugador(tmp.trim(),nombres[Integer.parseInt(tmp.trim())-1],st.nextToken().trim()) ;
                     }
                     break;
                 }
@@ -91,7 +92,9 @@ public class HiloEscuchador extends Thread
                     //destino|origen|11|R01&B03
                     StringTokenizer st=new StringTokenizer(msg.getMensaje(),"&");
                     for (int i = 0; i < 7; i++) 
-                        cliente.agregaCarta(new Carta(st.nextToken().trim()));
+                        cliente.agregaCartas(new Carta(st.nextToken().trim()));
+                   
+            
                     cliente.ponInicial(st.nextToken().trim());
                     cliente.iniciarJuego();
                     break;

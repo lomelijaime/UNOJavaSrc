@@ -7,7 +7,7 @@ package unodistribuido;
 
 public class ProcesoEspera 
 {
-        private int idProceso;
+        private final int idProceso;
 	private Mensaje msg;
 	
 	public ProcesoEspera(int idProceso, Mensaje msg)

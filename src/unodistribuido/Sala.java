@@ -5,7 +5,6 @@
  */
 package unodistribuido;
 
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -18,7 +17,7 @@ import javax.swing.ImageIcon;
  */
 public class Sala extends javax.swing.JDialog{
 
-    private Micronucleo  micronucleo;
+    private final Micronucleo  micronucleo;
     private Point initialClick;
 
     public Sala(Micronucleo micronucleo) {
@@ -29,6 +28,7 @@ public class Sala extends javax.swing.JDialog{
         this.setLocationRelativeTo(micronucleo);
         setVisible(true);
         addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 initialClick = e.getPoint();
                 getComponentAt(initialClick);
@@ -82,7 +82,7 @@ public class Sala extends javax.swing.JDialog{
         });
         getContentPane().setLayout(null);
 
-        btnCerrar.setBackground(new java.awt.Color(230, 7, 12));
+        btnCerrar.setBackground(new java.awt.Color(255, 102, 0));
         btnCerrar.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         btnCerrar.setForeground(new java.awt.Color(255, 255, 255));
         btnCerrar.setText("Cerrar");
@@ -94,7 +94,7 @@ public class Sala extends javax.swing.JDialog{
         getContentPane().add(btnCerrar);
         btnCerrar.setBounds(180, 130, 90, 30);
 
-        btnCrear.setBackground(new java.awt.Color(230, 7, 12));
+        btnCrear.setBackground(new java.awt.Color(255, 102, 0));
         btnCrear.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         btnCrear.setForeground(new java.awt.Color(255, 255, 255));
         btnCrear.setText("Crear");

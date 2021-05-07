@@ -16,15 +16,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.util.ArrayList;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+import utilidades.Pila;
 
 /**
  *
@@ -53,7 +51,19 @@ import javax.swing.table.TableColumnModel;
  * 
 */
 
-public class Servidor extends javax.swing.JFrame implements Runnable {
+/**
+ * RESGUARDO DEL SERVIDOR
+ * 
+ * cadena conectar(in entero,in cadena)
+ * booleano cerrar(in entero,in cadena)
+ * booleano desconectar(in entero,in cadena)
+ * vacio votarInicio(vacio)
+ * vacia ejecutaGrito(vacio)
+ * vacia cancelaVoto(vacio)
+ * 
+ */
+
+public final class Servidor extends javax.swing.JFrame implements Runnable {
 
     private Point initialClick;
     private Micronucleo micronucleo;
@@ -62,148 +72,18 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
     private int seg;
     private boolean activo;
     private boolean banIniciado,banContador;
-    private Thread hiloServidor;
+    private Mensaje resp;
     
-    private final int JUGADORES_MAX=4;
+    private final Thread hiloServidor;
+    private final int JUGADORES_MAX=3;
     
     private String[] nombresCol= {"No.","Avatar", "Nickname", "IP","ID","Listo"};
-    private String[] nombres={"JOEL","JENNIE","OSVALDO","YOLANDA","DIANA","MARIO"};
+    private String[] nombres={"KAREN","ANGEL","ALLAN","MARIA","ROSA","LUIS"};
     private Timer tmrContador;
     private Barajeador barajeador;
     
     private DefaultTableModel modelo;
     
-    
-    public Servidor(Micronucleo micronucleo,Sala sala, int idProceso) {
-        initComponents();
-        banIniciado=false;
-        banContador=false;
-        seg=30;
-        jugadores=1;
-        this.micronucleo=micronucleo;
-        this.idProceso=idProceso;
-        hiloServidor=new Thread(this);
-        activo=true;
-        setSize(852, 480);
-        Toolkit tk=Toolkit.getDefaultToolkit();
-        Dimension d=tk.getScreenSize();
-        setLocation((d.width-getSize().width)/2,(d.height-getSize().height)/2);
-        
-        modelo=new DefaultTableModel();
-        modelo.setColumnIdentifiers(nombresCol);
-        tblJugadores.setModel(modelo);
-        tblJugadores.setDefaultRenderer(Object.class,new IconCellRenderer());
-        
-        TableColumnModel columnModel = tblJugadores.getColumnModel();
-        columnModel.getColumn(0).setPreferredWidth(25);
-        columnModel.getColumn(1).setPreferredWidth(50);
-        
-        tmrContador = new Timer(1000,new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent ae) 
-            {
-               
-                JLabel tmp=getContador();
-                seg--;
-                if (seg<=0)
-                {
-                    String respuesta,tmp3;
-                    byte[] msg;
-                    for (int i = 0; i < tblJugadores.getRowCount(); i++) 
-                    {    
-                        String tmp2=((JLabel)modelo.getValueAt(i, 5)).getIcon().toString();
-                        tmp2=tmp2.substring(tmp2.lastIndexOf("/")+1);
-                        if(!tmp2.equals("ok.png"))
-                        {
-                            tmp2=(String)modelo.getValueAt(i, 3);
-                            tmp3=(String)modelo.getValueAt(i, 4);
-                            respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"10|Bye";
-                            msg=respuesta.getBytes();
-                            micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
-                            modelo.removeRow(i--);
-                        }
-                    }
-                    for (int i = 0; i < tblJugadores.getRowCount(); i++) 
-                    {    
-                        String tmp2=((JLabel)modelo.getValueAt(i, 5)).getIcon().toString();
-                        tmp2=tmp2.substring(tmp2.lastIndexOf("/")+1);
-                        if(tmp2.equals("ok.png"))
-                        {
-                            tmp2=(String)modelo.getValueAt(i, 3);
-                            tmp3=(String)modelo.getValueAt(i, 4);
-                            respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"7|"+extraeJugadores();
-                            msg=respuesta.getBytes();
-                            micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
-                        }
-                    }
-                   barajeador=new Barajeador(tblJugadores.getRowCount());
-                   barajeador.barajea();
-                   Carta c=barajeador.getCartaMazo();
-                   banContador=false;
-                   tmrContador.stop();
-                   lblTimer.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/no.png")));
-                   lblContador.setText("00:30");
-                   String tmp2=null;
-                   tmp3=null;
-                   for (int i = 0; i < tblJugadores.getRowCount(); i++) 
-                   {
-                        tmp2=(String)modelo.getValueAt(i, 3);
-                        tmp3=(String)modelo.getValueAt(i, 4);
-                        respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"11|"+barajeador.getManoJugador(i).getMano()+"&"+c.getCarta();
-                        msg=respuesta.getBytes();
-                        micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
-                   }    
-                   banIniciado=true;
-                   seg=30;
-                   lblTimer.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/no.png")));
-                   tmp.setText("00:"+seg);
-                   tmrContador.stop();
-                   banContador=false;
-                   return;
-                }   
-                if (seg<10)
-                    tmp.setText("00:0"+seg);
-                else
-                    tmp.setText("00:"+seg);
-                
-            }
-            
-        });
-        
-        addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                initialClick = e.getPoint();
-                getComponentAt(initialClick);
-            }
-        });
-        addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) 
-            {
-                int thisX = getMe().getLocation().x;
-                int thisY = getMe().getLocation().y;
-
-                // Determine how much the mouse moved since the initial click
-                int xMoved = e.getX() - initialClick.x;
-                int yMoved = e.getY() - initialClick.y;
-
-                // Move window to this position
-                int X = thisX + xMoved;
-                int Y = thisY + yMoved;
-                getMe().setLocation(X, Y);
-            }
-        });
-        
-        
-        txtIP.setText(micronucleo.getIP());
-        txtNombre.setText(sala.getNombre());
-        txtID.setText(String.valueOf(idProceso));
-        sala.dispose();
-        
-        setVisible(true);
-        hiloServidor.start();
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -227,6 +107,7 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
         txtID = new javax.swing.JTextField();
         lblNombre = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
+        lblSonido = new javax.swing.JLabel();
         lblFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -282,7 +163,7 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
         lblContador.setBounds(50, 30, 70, 30);
 
         getContentPane().add(pnlTimer);
-        pnlTimer.setBounds(170, 350, 140, 80);
+        pnlTimer.setBounds(70, 340, 140, 80);
 
         btnSalir.setBackground(new java.awt.Color(255, 109, 0));
         btnSalir.setFont(new java.awt.Font("Britannic Bold", 1, 12)); // NOI18N
@@ -294,7 +175,7 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
             }
         });
         getContentPane().add(btnSalir);
-        btnSalir.setBounds(80, 360, 60, 60);
+        btnSalir.setBounds(250, 350, 60, 60);
 
         pnlServidor.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 3), "Datos de la Sala de Juego", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Britannic Bold", 1, 14), new java.awt.Color(255, 255, 255))); // NOI18N
         pnlServidor.setOpaque(false);
@@ -337,7 +218,18 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
         txtNombre.setBounds(110, 90, 110, 20);
 
         getContentPane().add(pnlServidor);
-        pnlServidor.setBounds(70, 200, 240, 130);
+        pnlServidor.setBounds(70, 190, 240, 130);
+
+        lblSonido.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSonido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/otros/sonido.png"))); // NOI18N
+        lblSonido.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblSonido.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblSonidoMouseClicked(evt);
+            }
+        });
+        getContentPane().add(lblSonido);
+        lblSonido.setBounds(10, 420, 50, 50);
 
         lblFondo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/fondos/fondo.png"))); // NOI18N
@@ -346,11 +238,140 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    public Servidor(Micronucleo micronucleo,Sala sala, int idProceso) {
+        initComponents();
+        banIniciado=false;
+        banContador=false;
+        seg=30;
+        jugadores=1;
+        this.micronucleo=micronucleo;
+        this.idProceso=idProceso;
+        hiloServidor=new Thread(this);
+        activo=true;
+        setSize(852, 480);
+        Toolkit tk=Toolkit.getDefaultToolkit();
+        Dimension d=tk.getScreenSize();
+        setLocation((d.width-getSize().width)/2,(d.height-getSize().height)/2);
+        
+        modelo=new DefaultTableModel();
+        modelo.setColumnIdentifiers(nombresCol);
+        tblJugadores.setModel(modelo);
+        tblJugadores.setDefaultRenderer(Object.class,new IconCellRenderer());
+        
+        TableColumnModel columnModel = tblJugadores.getColumnModel();
+        columnModel.getColumn(0).setPreferredWidth(25);
+        columnModel.getColumn(1).setPreferredWidth(50);
+        cambiaImagenSonido();
+        
+        tmrContador = new Timer(1000,new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent ae) 
+            {
+                JLabel tmp=getContador();
+                String respuesta,tmp3,tmp2;
+                byte[] msg;
+                Carta c;
+                seg--;
+                if (seg<=0)
+                {
+                    for (int i = 0; i < tblJugadores.getRowCount(); i++) 
+                    {    
+                        tmp2=((JLabel)modelo.getValueAt(i, 5)).getIcon().toString();
+                        tmp2=tmp2.substring(tmp2.lastIndexOf("/")+1);
+                        if(!tmp2.equals("ok.png"))
+                        {
+                            tmp2=(String)modelo.getValueAt(i, 3);
+                            tmp3=(String)modelo.getValueAt(i, 4);
+                            respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"10|";
+                            msg=respuesta.getBytes();
+                            micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
+                            modelo.removeRow(i--);
+                        }
+                    }
+                    for (int i = 0; i < tblJugadores.getRowCount(); i++) 
+                    {    
+                        tmp2=((JLabel)modelo.getValueAt(i, 5)).getIcon().toString();
+                        tmp2=tmp2.substring(tmp2.lastIndexOf("/")+1);
+                        if(tmp2.equals("ok.png"))
+                        {
+                            tmp2=(String)modelo.getValueAt(i, 3);
+                            tmp3=(String)modelo.getValueAt(i, 4);
+                            respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"7|"+extraeJugadores();
+                            msg=respuesta.getBytes();
+                            micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
+                        }
+                    }
+                   barajeador=new Barajeador(tblJugadores.getRowCount());
+                   barajeador.barajea();
+                   c=barajeador.getCartaMazoInicial();
+                   banContador=false;
+                   tmrContador.stop();
+                   lblTimer.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/no.png")));
+                   lblContador.setText("00:30");
+                   for (int i = 0; i < tblJugadores.getRowCount(); i++) 
+                   {
+                        tmp2=(String)modelo.getValueAt(i, 3);
+                        tmp3=(String)modelo.getValueAt(i, 4);
+                        respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"11|"+barajeador.getManoJugador(i).getMano()+"&"+c.getCarta();
+                        msg=respuesta.getBytes();
+                        micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
+                   }    
+                   banIniciado=true;
+                   seg=30;
+                   lblTimer.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/no.png")));
+                   tmp.setText("00:"+seg);
+                   tmrContador.stop();
+                   banContador=false;
+                   return;
+                }   
+                if (seg<10)
+                    tmp.setText("00:0"+seg);
+                else
+                    tmp.setText("00:"+seg);
+                
+            }
+            
+        });
+        
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                initialClick = e.getPoint();
+                getComponentAt(initialClick);
+            }
+        });
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) 
+            {
+                int thisX = getMe().getLocation().x;
+                int thisY = getMe().getLocation().y;
 
+                // Determine how much the mouse moved since the initial click
+                int xMoved = e.getX() - initialClick.x;
+                int yMoved = e.getY() - initialClick.y;
+
+                // Move window to this position
+                int X = thisX + xMoved;
+                int Y = thisY + yMoved;
+                getMe().setLocation(X, Y);
+            }
+        });
+        
+        
+        txtIP.setText(micronucleo.getIP());
+        txtNombre.setText(sala.getNombre());
+        txtID.setText(String.valueOf(idProceso));
+        sala.dispose();
+        
+        setVisible(true);
+        hiloServidor.start();
+    }
+   
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
       activo=false;
       notificar();
-      String tmp2=null,tmp3=null,respuesta;
+      String tmp2,tmp3,respuesta;
       byte[] msg;
       for (int i = 0; i < tblJugadores.getRowCount(); i++) 
       {
@@ -368,10 +389,10 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
     }//GEN-LAST:event_btnSalirActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+      String tmp2,tmp3,respuesta;
+      byte[] msg;
       activo=false;
       notificar();
-        String tmp2=null,tmp3=null,respuesta;
-      byte[] msg;
       for (int i = 0; i < tblJugadores.getRowCount(); i++) 
       {
         tmp2=(String)modelo.getValueAt(i, 3);
@@ -387,230 +408,134 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
       dispose();
     }//GEN-LAST:event_formWindowClosing
 
-    /**
-     * @param args the command line arguments
-     */
-   public Servidor getMe()
+    private void lblSonidoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblSonidoMouseClicked
+        micronucleo.cambiaImagenSonido();
+    }//GEN-LAST:event_lblSonidoMouseClicked
+    
+    public void cerrar()
+    {
+        String tmp2,tmp3,respuesta;
+      byte[] msg;
+      activo=false;
+      notificar();
+      for (int i = 0; i < tblJugadores.getRowCount(); i++) 
+      {
+        tmp2=(String)modelo.getValueAt(i, 3);
+        tmp3=(String)modelo.getValueAt(i, 4);
+        respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"9|Bye";
+        msg=respuesta.getBytes();
+        micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
+      }    
+
+      micronucleo.eliminaServidor(this);
+      micronucleo.eliminaDestinoLocal(idProceso);
+      micronucleo.requestFocus();
+      dispose();
+    }
+    public Servidor getMe()
     {
         return this;
     }
-   public void setIP(String IP)
-   {
-       txtIP.setText(IP);
-   }
-   public String getNombre()
-   {
-       return txtNombre.getText().trim();
-   }
+     public void cambiaImagenSonido()
+    {
+        if (!micronucleo.getPlayer().getSonando())
+            lblSonido.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/nosonido.png")));
+        else
+            lblSonido.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/sonido.png")));
+       
+    }
+    public void setIP(String IP)
+    {
+        txtIP.setText(IP);
+    }
+    public String getNombre()
+    {
+        return txtNombre.getText().trim();
+    }
     @Override
     public void run() 
     {
-        String respuesta="";
+        String respuesta;
         Mensaje tmp;
         while(activo)
         {
             byte[] msg=new byte[1024];
-            Mensaje resp=micronucleo.receive(idProceso, msg);
+            resp=micronucleo.receive(idProceso, msg);
             if (!activo)
               return;
            switch(resp.getCodop())
             {
                 case 1:
                 {
+                    String valorRetorno;
+                    Pila pila=new Pila();
+                    //extrayendo valores del mensaje y metiendolos a la pila
                     StringTokenizer st=new StringTokenizer(resp.getMensaje(),"&");
-                    if (tblJugadores.getRowCount()<JUGADORES_MAX)
+                    pila.push(st.nextToken());
+                    pila.push(st.nextToken());
+                    //extraemos los valores de la pila
+                    char nombre[]=((String)pila.pop()).toCharArray();
+                    int foto=Integer.parseInt((String)pila.pop());
+                    //llamamos a la verdadera funcion del resguardo del servidor
+                    valorRetorno=new String(conectar(foto,nombre));
+                    //respondemos al cliente
+                    msg=valorRetorno.getBytes();
+                    micronucleo.send(resp.getOrigen(), resp.getIP(),msg);
+                    break;
+                }
+                case 2: 
+                {
+                    Pila pila=new Pila();
+                    //extrayendo valores del mensaje y metiendolos a la pila
+                    StringTokenizer st=new StringTokenizer(resp.getMensaje(),"&");
+                    pila.push(st.nextToken());
+                    pila.push(st.nextToken());
+                    //extraemos los valores de la pila
+                    char nombre[]=((String)pila.pop()).toCharArray();
+                    int foto=Integer.parseInt((String)pila.pop());
+                    //llamamos a la verdadera funcion del resguardo del servidor
+                    if (cerrar(foto,nombre))
                     {
-                        if (banIniciado)
-                        {
-                            respuesta= resp.getOrigen()+"|"+resp.getDestino()+"|"+"4|El juego ya inicio, imposible unirse!";
-                            msg=respuesta.getBytes();
-                            micronucleo.send(resp.getOrigen(), resp.getIP(),msg);
-                        }
-                        else
-                        {
-                            agregaJugador(Integer.parseInt(st.nextToken()),st.nextToken(),resp.getIP(),String.valueOf(resp.getOrigen()));
-                            revisarInicio();
-                            respuesta= resp.getOrigen()+"|"+resp.getDestino()+"|"+"3|Ok";
-                            msg=respuesta.getBytes();
-                            micronucleo.send(resp.getOrigen(), resp.getIP(),msg);
-                            String tmp2=null,tmp3=null;
-                            for (int i = 0; i < tblJugadores.getRowCount(); i++) 
-                            {
-                                tmp2=(String)modelo.getValueAt(i, 3);
-                                tmp3=(String)modelo.getValueAt(i, 4);
-                                respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"7|"+extraeJugadores();
-                                msg=respuesta.getBytes();
-                                micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
-                            }                            
-                        }
-                    }
-                    
-                    else
-                    {
-                        respuesta= resp.getOrigen()+"|"+resp.getDestino()+"|"+"4|La sala de juegos esta llena!";
-                        msg=respuesta.getBytes();
-                        micronucleo.send(resp.getOrigen(), resp.getIP(),msg);
+                         respuesta= resp.getOrigen()+"|"+resp.getDestino()+"|"+"8|";
+                         msg=respuesta.getBytes();
+                          //respondemos al cliente
+                         micronucleo.send(resp.getOrigen(), resp.getIP(),msg);
                     }
                     break;
                 }
-                case 2: case 5:
+                case 5: 
                 {
+                    Pila pila=new Pila();
+                    //extrayendo valores del mensaje y metiendolos a la pila
                     StringTokenizer st=new StringTokenizer(resp.getMensaje(),"&");
-                    quitaJugador(resp.getIP(),String.valueOf(resp.getOrigen()));
-                    if (banIniciado)
+                    pila.push(st.nextToken());
+                    pila.push(st.nextToken());
+                    //extraemos los valores de la pila
+                    char nombre[]=((String)pila.pop()).toCharArray();
+                    int foto=Integer.parseInt((String)pila.pop());
+                    //llamamos a la verdadera funcion del resguardo del servidor
+                    if (desconectar(foto,nombre))
                     {
-                        if (tblJugadores.getRowCount()<2)
-                        {
-                                String tmp2=null,tmp3=null;
-                                for (int i = 0; i < tblJugadores.getRowCount(); i++) 
-                                {
-                                  modelo.setValueAt(new JLabel(new ImageIcon(getClass().getResource("imagenes/otros/no.png"))), i, 5);
-                                  tmp2=(String)modelo.getValueAt(i, 3);
-                                  tmp3=(String)modelo.getValueAt(i, 4);
-                                  respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"12|Bye";
-                                  msg=respuesta.getBytes();
-                                  micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
-                                }    
-                                banIniciado=false;
-                                banContador=false;
-                        }
-                            
+                         respuesta= resp.getOrigen()+"|"+resp.getDestino()+"|"+"8|";
+                         msg=respuesta.getBytes();
+                          //respondemos al cliente
+                         micronucleo.send(resp.getOrigen(), resp.getIP(),msg);
                     }
-                    revisarInicio();
-                    String tmp2=null,tmp3=null;
-                     for (int i = 0; i < tblJugadores.getRowCount(); i++) 
-                        {
-                            tmp2=(String)modelo.getValueAt(i, 3);
-                            tmp3=(String)modelo.getValueAt(i, 4);
-                            respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"7|"+extraeJugadores();
-                            msg=respuesta.getBytes();
-                            micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
-                        }  
-                    respuesta= resp.getOrigen()+"|"+resp.getDestino()+"|"+"8|ok";
-                    msg=respuesta.getBytes();
-                    micronucleo.send(resp.getOrigen(), resp.getIP(),msg); 
                     break;
                 }
                
                 case 6:
                 {
-                    ponListo(resp.getIP(),String.valueOf(resp.getOrigen()));
-                    if (tblJugadores.getRowCount()>=2)
-                    {
-                        int i,j,total,votos;
-                        total=tblJugadores.getRowCount();
-                        votos=0;
-                        for (i = 0; i < tblJugadores.getRowCount(); i++) 
-                        {    
-                            String tmp2=((JLabel)modelo.getValueAt(i, 5)).getIcon().toString();
-                            tmp2=tmp2.substring(tmp2.lastIndexOf("/")+1);
-                            if(tmp2.equals("ok.png"))
-                                votos++;
-                        }
-                        if(votos==total)
-                        {
-                            barajeador=new Barajeador(tblJugadores.getRowCount());
-                            barajeador.barajea();
-                            Carta c=barajeador.getCartaMazo();
-                            banContador=false;
-                            tmrContador.stop();
-                            lblTimer.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/no.png")));
-                            lblContador.setText("00:30");
-                            String tmp2=null,tmp3=null;
-                            for (i = 0; i < tblJugadores.getRowCount(); i++) 
-                            {
-                                tmp2=(String)modelo.getValueAt(i, 3);
-                                tmp3=(String)modelo.getValueAt(i, 4);
-                                respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"11|"+barajeador.getManoJugador(i).getMano()+"&"+c.getCarta();
-                                msg=respuesta.getBytes();
-                                micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
-                            }       
-                            banIniciado=true;
-                            
-                        }
-                        else
-                        {
-                            if (total>2)
-                            {
-                                if(votos>=(total/2)+1)
-                                {
-                                    lblTimer.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/ok.png")));
-                                    banContador=true;
-                                    tmrContador.start();
-                                }
-                            }
-                        }
-                    }
+                    votarInicio();
                     break;
                 }
                 case 13:{
-                    String tmp2=null,tmp3=null;
-                    for (int i = 0; i < tblJugadores.getRowCount(); i++) 
-                    {
-                        tmp2=(String)modelo.getValueAt(i, 3);
-                        tmp3=(String)modelo.getValueAt(i, 4);
-                        respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|14|UNO";
-                        msg=respuesta.getBytes();
-                        micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
-                    }  
+                    ejecutaGrito();
                     break;
                 }
                 case 15:{
-                    quitaListo(resp.getIP(),String.valueOf(resp.getOrigen()));
-                    if (tblJugadores.getRowCount()>=2)
-                    {
-                        int i,j,total,votos;
-                        total=tblJugadores.getRowCount();
-                        votos=0;
-                        for (i = 0; i < tblJugadores.getRowCount(); i++) 
-                        {    
-                            String tmp2=((JLabel)modelo.getValueAt(i, 5)).getIcon().toString();
-                            tmp2=tmp2.substring(tmp2.lastIndexOf("/")+1);
-                            if(tmp2.equals("ok.png"))
-                                votos++;
-                        }
-                        if(votos==total)
-                        {
-                            barajeador=new Barajeador(tblJugadores.getRowCount());
-                            barajeador.barajea();
-                            Carta c=barajeador.getCartaMazo();
-                            banContador=false;
-                            tmrContador.stop();
-                            lblTimer.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/no.png")));
-                            lblContador.setText("00:30");
-                            String tmp2=null,tmp3=null;
-                            for (i = 0; i < tblJugadores.getRowCount(); i++) 
-                            {
-                                tmp2=(String)modelo.getValueAt(i, 3);
-                                tmp3=(String)modelo.getValueAt(i, 4);
-                                respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"11|"+barajeador.getManoJugador(i).getMano()+"&"+c.getCarta();
-                                msg=respuesta.getBytes();
-                                micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
-                            }       
-                            banIniciado=true;
-                            
-                        }
-                        else
-                        {
-                            if (total>2)
-                            {
-                                if(votos>=(total/2)+1)
-                                {
-                                    lblTimer.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/ok.png")));
-                                    banContador=true;
-                                    tmrContador.start();
-                                }
-                                else
-                                {
-                                    seg=30;
-                                    lblTimer.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/no.png")));
-                                    lblContador.setText("00:30");
-                                    tmrContador.stop();
-                                    banContador=false;
-                                }
-                            }
-                        }
-                    }
+                    cancelaVoto();
+                    actualizaClientesVoto();
                     break;
                 }
                 
@@ -621,14 +546,18 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
     }
     private void revisarInicio()
     {
+        int i,j,total,votos;
+        String tmp2,tmp3,respuesta;
+        Carta c;
+        byte[] msg;
         if (banIniciado)
             return;
-        int i,j,total,votos;
+        
         total=tblJugadores.getRowCount();
         votos=0;
         for (i = 0; i < tblJugadores.getRowCount(); i++) 
         {    
-            String tmp2=((JLabel)modelo.getValueAt(i, 5)).getIcon().toString();
+            tmp2=((JLabel)modelo.getValueAt(i, 5)).getIcon().toString();
             tmp2=tmp2.substring(tmp2.lastIndexOf("/")+1);
             if(tmp2.equals("ok.png"))
                 votos++;
@@ -639,18 +568,17 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
             {
                 barajeador=new Barajeador(tblJugadores.getRowCount());
                 barajeador.barajea();
-                Carta c=barajeador.getCartaMazo();
+                c=barajeador.getCartaMazoInicial();
                 banContador=false;
                 tmrContador.stop();
                 lblTimer.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/no.png")));
                 lblContador.setText("00:30");
-                String tmp2=null,tmp3=null;
                 for (i = 0; i < tblJugadores.getRowCount(); i++) 
                 {
                     tmp2=(String)modelo.getValueAt(i, 3);
                     tmp3=(String)modelo.getValueAt(i, 4);
-                    String respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"11|"+barajeador.getManoJugador(i).getMano()+"&"+c.getCarta();
-                    byte [] msg=respuesta.getBytes();
+                    respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"11|"+barajeador.getManoJugador(i).getMano()+"&"+c.getCarta();
+                    msg=respuesta.getBytes();
                     micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
                 }    
                 banIniciado=true;
@@ -677,18 +605,17 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
             {
                 barajeador=new Barajeador(tblJugadores.getRowCount());
                 barajeador.barajea();
-                Carta c=barajeador.getCartaMazo();
+                c=barajeador.getCartaMazoInicial();
                 banContador=false;
                 tmrContador.stop();
                 lblTimer.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/no.png")));
                 lblContador.setText("00:30");
-                String tmp2=null,tmp3=null;
                 for (i = 0; i < tblJugadores.getRowCount(); i++) 
                 {
                     tmp2=(String)modelo.getValueAt(i, 3);
                     tmp3=(String)modelo.getValueAt(i, 4);
-                    String respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"11|"+barajeador.getManoJugador(i).getMano()+"&"+c.getCarta();
-                    byte [] msg=respuesta.getBytes();
+                    respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"11|"+barajeador.getManoJugador(i).getMano()+"&"+c.getCarta();
+                    msg=respuesta.getBytes();
                     micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
                 }    
                 banIniciado=true; 
@@ -717,9 +644,9 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
     {
         return lblContador;
     }
-     private void ponListo(String IP,String ID)
-     {
-         String tmp;
+    private void ponListo(String IP,String ID)
+    {
+        String tmp;
         for (int i = 0; i < tblJugadores.getRowCount(); i++) 
         {
             tmp=(String)modelo.getValueAt(i, 3);
@@ -733,7 +660,7 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
                 }
             }
         }
-     }
+    }
      private void quitaListo(String IP,String ID)
      {
          String tmp;
@@ -753,7 +680,9 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
      }
      private String extraeJugadores()
      {
-        String tmp="";
+        String tmp;
+        String tmp2;
+        tmp = "";
         int i,j;
         for (i = 0; i < tblJugadores.getRowCount(); i++) 
         {    
@@ -762,11 +691,18 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
                 if (nombres[j].equals(((String)modelo.getValueAt(i, 2)).trim()))
                     break;
             }
-            tmp+=(j+1)+"&";
+            tmp2=((JLabel)modelo.getValueAt(i, 5)).getIcon().toString();
+            tmp2=tmp2.substring(tmp2.lastIndexOf("/")+1);
+            if(tmp2.equals("ok.png"))
+                tmp+=(j+1)+"&1&";
+            else
+                tmp+=(j+1)+"&0&";
         }
         tmp=tmp.substring(0,tmp.lastIndexOf("&"));
         return tmp;
      }
+     
+     
      
      
     private void quitaJugador(String IP,String ID)
@@ -791,7 +727,226 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
             hiloServidor.notify();
         }
     }
-
+    private void actualizaClientesVoto()
+    {
+        String respuesta;
+        byte[] msg;
+        String tmp2,tmp3;
+        for (int i = 0; i < tblJugadores.getRowCount(); i++) 
+        {
+            tmp2=(String)modelo.getValueAt(i, 3);
+            tmp3=(String)modelo.getValueAt(i, 4);
+            respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"7|"+extraeJugadores();
+            msg=respuesta.getBytes();
+            micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
+        }
+    }
+    
+    //RESGUARDO DEL SERVIDOR
+    
+    private char[] conectar(int foto,char[] nombre)
+    {
+        String respuesta;
+        byte[] msg;
+        if (tblJugadores.getRowCount()<JUGADORES_MAX)
+        {
+            if (banIniciado)
+            {
+                respuesta= resp.getOrigen()+"|"+resp.getDestino()+"|"+"4|El juego ya inicio, imposible unirse!";
+                
+            }
+            else
+            {
+                agregaJugador(foto,String.valueOf(nombre),resp.getIP(),String.valueOf(resp.getOrigen()));
+                revisarInicio();
+                String tmp2,tmp3;
+                for (int i = 0; i < tblJugadores.getRowCount(); i++) 
+                {
+                    tmp2=(String)modelo.getValueAt(i, 3);
+                    tmp3=(String)modelo.getValueAt(i, 4);
+                    respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"7|"+extraeJugadores();
+                    msg=respuesta.getBytes();
+                    micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
+                }
+                respuesta= resp.getOrigen()+"|"+resp.getDestino()+"|"+"3|";
+            }
+        }
+        else
+        {
+            respuesta= resp.getOrigen()+"|"+resp.getDestino()+"|"+"4|La sala de juegos esta llena!";           
+        }
+        return respuesta.toCharArray();
+    }
+    
+    private boolean cerrar(int foto,char[] nombre)
+    {
+        StringTokenizer st=new StringTokenizer(resp.getMensaje(),"&");
+        String respuesta;
+        String tmp2,tmp3;
+        byte[] msg;
+        quitaJugador(resp.getIP(),String.valueOf(resp.getOrigen()));
+        if (banIniciado)
+        {
+            if (tblJugadores.getRowCount()<2)
+            {
+                for (int i = 0; i < tblJugadores.getRowCount(); i++) 
+                {
+                    modelo.setValueAt(new JLabel(new ImageIcon(getClass().getResource("imagenes/otros/no.png"))), i, 5);
+                    tmp2=(String)modelo.getValueAt(i, 3);
+                    tmp3=(String)modelo.getValueAt(i, 4);
+                    respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"12|";
+                    msg=respuesta.getBytes();
+                    micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
+                }    
+                banIniciado=false;
+                banContador=false;
+            }
+        }
+        revisarInicio();
+        for (int i = 0; i < tblJugadores.getRowCount(); i++) 
+        {
+            tmp2=(String)modelo.getValueAt(i, 3);
+            tmp3=(String)modelo.getValueAt(i, 4);
+            respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"7|"+extraeJugadores();
+            msg=respuesta.getBytes();
+            micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
+        }  
+        
+        return true;
+    }
+    private boolean desconectar(int foto,char[] nombre)
+    {
+        return cerrar(foto,nombre);
+    }
+    
+    private void votarInicio()
+    {   
+        int i,j,total,votos;
+        String respuesta,tmp2,tmp3;
+        byte[] msg;
+        Carta c;
+        ponListo(resp.getIP(),String.valueOf(resp.getOrigen()));
+        actualizaClientesVoto();
+        if (tblJugadores.getRowCount()>=2)
+        {
+            total=tblJugadores.getRowCount();
+            votos=0;
+            for (i = 0; i < tblJugadores.getRowCount(); i++) 
+            {    
+                tmp2=((JLabel)modelo.getValueAt(i, 5)).getIcon().toString();
+                tmp2=tmp2.substring(tmp2.lastIndexOf("/")+1);
+                if(tmp2.equals("ok.png"))
+                    votos++;
+            }
+            if(votos==total)
+            {
+                barajeador=new Barajeador(tblJugadores.getRowCount());
+                barajeador.barajea();
+                c=barajeador.getCartaMazoInicial();
+                banContador=false;
+                tmrContador.stop();
+                lblTimer.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/no.png")));
+                lblContador.setText("00:30");
+                for (i = 0; i < tblJugadores.getRowCount(); i++) 
+                {
+                    tmp2=(String)modelo.getValueAt(i, 3);
+                    tmp3=(String)modelo.getValueAt(i, 4);
+                    respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"11|"+barajeador.getManoJugador(i).getMano()+"&"+c.getCarta();
+                    msg=respuesta.getBytes();
+                    micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
+                }       
+                banIniciado=true;
+            }
+            else
+            {
+                if (total>2)
+                {
+                    if(votos>=(total/2)+1)
+                    {
+                        lblTimer.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/ok.png")));
+                        banContador=true;
+                        tmrContador.start();
+                    }
+                }
+            }
+        }
+    }
+    
+    private void ejecutaGrito()
+    {
+        byte[] msg;
+        String tmp2,tmp3,respuesta;
+        for (int i = 0; i < tblJugadores.getRowCount(); i++) 
+        {
+            tmp2=(String)modelo.getValueAt(i, 3);
+            tmp3=(String)modelo.getValueAt(i, 4);
+            respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|14|UNO";
+            msg=respuesta.getBytes();
+            micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
+        }  
+    }
+    
+    private void cancelaVoto()
+    {
+        byte[] msg;
+        String tmp2,tmp3,respuesta;
+        int i,j,total,votos;
+        Carta c;
+        quitaListo(resp.getIP(),String.valueOf(resp.getOrigen()));
+        if (tblJugadores.getRowCount()>=2)
+        {
+            total=tblJugadores.getRowCount();
+            votos=0;
+            for (i = 0; i < tblJugadores.getRowCount(); i++) 
+            {    
+                tmp2=((JLabel)modelo.getValueAt(i, 5)).getIcon().toString();
+                tmp2=tmp2.substring(tmp2.lastIndexOf("/")+1);
+                if(tmp2.equals("ok.png"))
+                    votos++;
+            }
+            if(votos==total)
+            {
+                barajeador=new Barajeador(tblJugadores.getRowCount());
+                barajeador.barajea();
+                c=barajeador.getCartaMazoInicial();
+                banContador=false;
+                tmrContador.stop();
+                lblTimer.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/no.png")));
+                lblContador.setText("00:30");
+                for (i = 0; i < tblJugadores.getRowCount(); i++) 
+                {
+                    tmp2=(String)modelo.getValueAt(i, 3);
+                    tmp3=(String)modelo.getValueAt(i, 4);
+                    respuesta= (Integer.parseInt(tmp3)*-1)+"|"+idProceso+"|"+"11|"+barajeador.getManoJugador(i).getMano()+"&"+c.getCarta();
+                    msg=respuesta.getBytes();
+                    micronucleo.send((Integer.parseInt(tmp3)*-1), tmp2,msg);
+                }       
+                banIniciado=true;
+            }
+            else
+            {
+                if (total>2)
+                {
+                    if(votos>=(total/2)+1)
+                    {
+                        lblTimer.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/ok.png")));
+                        banContador=true;
+                        tmrContador.start();
+                    }
+                    else
+                    {
+                        seg=30;
+                        lblTimer.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/no.png")));
+                        lblContador.setText("00:30");
+                        tmrContador.stop();
+                        banContador=false;
+                    }
+                }
+            }
+        }
+    }
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSalir;
     private javax.swing.JScrollPane jScrollPane1;
@@ -800,6 +955,7 @@ public class Servidor extends javax.swing.JFrame implements Runnable {
     private javax.swing.JLabel lblID;
     private javax.swing.JLabel lblIP;
     private javax.swing.JLabel lblNombre;
+    private javax.swing.JLabel lblSonido;
     private javax.swing.JLabel lblTimer;
     private javax.swing.JPanel pnlJugadores;
     private javax.swing.JPanel pnlServidor;

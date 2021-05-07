@@ -18,10 +18,12 @@ import javax.swing.ImageIcon;
  */
 public class Avatar extends javax.swing.JDialog {
 
-    private Micronucleo  micronucleo;
+    private final Micronucleo  micronucleo;
+    private final String[] nombres={"KAREN","ANGEL","ALLAN","MARIA","ROSA","LUIS"};
+
     private int avatar;
     private Point initialClick;
-    private String[] nombres={"JOEL","JENNIE","OSVALDO","YOLANDA","DIANA","MARIO"};
+
 
     public Avatar(Micronucleo micronucleo) {
         initComponents();
@@ -32,8 +34,9 @@ public class Avatar extends javax.swing.JDialog {
         this.setLocationRelativeTo(micronucleo);
         setVisible(true);
         cargaImg();
-        lblNick.setText("JOEL");
+        lblNick.setText(nombres[0]);
         addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 initialClick = e.getPoint();
                 getComponentAt(initialClick);
@@ -90,7 +93,7 @@ public class Avatar extends javax.swing.JDialog {
         });
         getContentPane().setLayout(null);
 
-        btnCerrar.setBackground(new java.awt.Color(230, 7, 12));
+        btnCerrar.setBackground(new java.awt.Color(255, 102, 0));
         btnCerrar.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         btnCerrar.setForeground(new java.awt.Color(255, 255, 255));
         btnCerrar.setText("Cerrar");
@@ -106,7 +109,7 @@ public class Avatar extends javax.swing.JDialog {
         getContentPane().add(lblFoto);
         lblFoto.setBounds(180, 50, 91, 91);
 
-        btnCrear.setBackground(new java.awt.Color(230, 7, 12));
+        btnCrear.setBackground(new java.awt.Color(255, 102, 0));
         btnCrear.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         btnCrear.setForeground(new java.awt.Color(255, 255, 255));
         btnCrear.setText("Crear");
@@ -118,7 +121,7 @@ public class Avatar extends javax.swing.JDialog {
         getContentPane().add(btnCrear);
         btnCrear.setBounds(20, 80, 90, 30);
 
-        btnDer.setBackground(new java.awt.Color(230, 7, 12));
+        btnDer.setBackground(new java.awt.Color(255, 102, 0));
         btnDer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/otros/der.png"))); // NOI18N
         btnDer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -128,7 +131,7 @@ public class Avatar extends javax.swing.JDialog {
         getContentPane().add(btnDer);
         btnDer.setBounds(280, 80, 30, 30);
 
-        btnIzq.setBackground(new java.awt.Color(230, 7, 12));
+        btnIzq.setBackground(new java.awt.Color(255, 102, 0));
         btnIzq.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/otros/izq.png"))); // NOI18N
         btnIzq.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -173,7 +176,7 @@ public class Avatar extends javax.swing.JDialog {
     private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
        
             int valor=(int)(Math.random()*Integer.MAX_VALUE);
-            new Cliente(micronucleo,this,valor);
+            micronucleo.almacenaCliente(new Cliente(micronucleo,this,valor));
             setVisible(false);
        
     }//GEN-LAST:event_btnCrearActionPerformed

@@ -18,13 +18,14 @@ public class RecibePaquetes extends Thread
 {
    
      private boolean activo;
-     private ArrayList esperando;
-     private ArrayList mensajes;
+     private final ArrayList esperando;
+     private final ArrayList mensajes;
+     private final Micronucleo middleware;
+     private final DatagramSocket dsReceive;
+     
      private DatagramPacket dp;
-     private DatagramSocket dsReceive;
-     private Micronucleo middleware;
- 
- 
+     
+    
      public RecibePaquetes(DatagramSocket dsReceive,Micronucleo middleware)
      {
         this.middleware=middleware;

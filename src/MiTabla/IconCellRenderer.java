@@ -7,9 +7,6 @@ package MiTabla;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -26,7 +23,7 @@ public class IconCellRenderer extends DefaultTableCellRenderer
         
         if (row%2!=0)
         {
-            setBackground(new Color(230,7,12));
+            setBackground(new Color(255,102,0));
             setForeground(new Color(255,255,255));
         }
         else
@@ -51,7 +48,7 @@ public class IconCellRenderer extends DefaultTableCellRenderer
     {
         
             if (row%2!=0)
-                l.setBackground(new Color(230,7,12));
+                l.setBackground(new Color(255,102,0));
            else
                 l.setBackground(new Color(255,255,255));
             l.setForeground(t.getForeground());
