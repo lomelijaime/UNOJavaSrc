@@ -2,9 +2,6 @@
 package unodistribuido;
 
 
-import java.awt.Color;
-
-
 public class Acerca extends javax.swing.JFrame {
 
     private Micronucleo  micronucleo;
