@@ -70,7 +70,7 @@ public final class Cliente extends javax.swing.JFrame implements Runnable {
     private final int foto;
     private final Thread hiloCliente;
     private final HiloEscuchador hiloEscuchador;
-    private final String[] nombres={"KAREN","ANGEL","ALLAN","MARIA","ROSA","LUIS"};
+    private final String[] nombres={"JOEL","JENNIE","OSVALDO","YOLANDA","DIANA","MARIO"};
     private final String[] nombresCol= {"Voto","Avatar", "Nombre", "# Cartas"};
     private final ArrayList<CartaGrafica> cartas;
     
@@ -259,7 +259,7 @@ public final class Cliente extends javax.swing.JFrame implements Runnable {
         pnlServidor.add(lblIP);
         lblIP.setBounds(20, 30, 90, 20);
         pnlServidor.add(txtIP);
-        txtIP.setBounds(130, 30, 110, 20);
+        txtIP.setBounds(130, 30, 110, 22);
 
         lblID.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         lblID.setForeground(new java.awt.Color(255, 255, 255));
@@ -267,9 +267,9 @@ public final class Cliente extends javax.swing.JFrame implements Runnable {
         pnlServidor.add(lblID);
         lblID.setBounds(20, 70, 90, 20);
         pnlServidor.add(txtID);
-        txtID.setBounds(130, 70, 110, 20);
+        txtID.setBounds(130, 70, 110, 22);
 
-        btnConectar.setBackground(new java.awt.Color(255, 109, 0));
+        btnConectar.setBackground(new java.awt.Color(230, 7, 12));
         btnConectar.setFont(new java.awt.Font("Britannic Bold", 1, 12)); // NOI18N
         btnConectar.setForeground(new java.awt.Color(255, 255, 255));
         btnConectar.setText("Conectar");
@@ -279,7 +279,7 @@ public final class Cliente extends javax.swing.JFrame implements Runnable {
             }
         });
         pnlServidor.add(btnConectar);
-        btnConectar.setBounds(50, 110, 160, 21);
+        btnConectar.setBounds(50, 110, 160, 18);
 
         getContentPane().add(pnlServidor);
         pnlServidor.setBounds(50, 420, 270, 150);

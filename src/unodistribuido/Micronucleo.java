@@ -22,6 +22,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import javax.swing.ImageIcon;
+import unodistribuido.Opciones;
 
 
 /**
@@ -68,7 +69,7 @@ public class Micronucleo extends javax.swing.JFrame
         });
         getContentPane().setLayout(null);
 
-        btnSalir.setBackground(new java.awt.Color(255, 102, 0));
+        btnSalir.setBackground(new java.awt.Color(230, 7, 12));
         btnSalir.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         btnSalir.setForeground(new java.awt.Color(255, 255, 255));
         btnSalir.setText("Salir!");
@@ -80,7 +81,7 @@ public class Micronucleo extends javax.swing.JFrame
         getContentPane().add(btnSalir);
         btnSalir.setBounds(500, 260, 190, 40);
 
-        btnCliente.setBackground(new java.awt.Color(255, 102, 0));
+        btnCliente.setBackground(new java.awt.Color(230, 7, 12));
         btnCliente.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         btnCliente.setForeground(new java.awt.Color(255, 255, 255));
         btnCliente.setText("Nuevo Jugador!");
@@ -92,7 +93,7 @@ public class Micronucleo extends javax.swing.JFrame
         getContentPane().add(btnCliente);
         btnCliente.setBounds(500, 50, 190, 40);
 
-        btnOpciones.setBackground(new java.awt.Color(255, 102, 0));
+        btnOpciones.setBackground(new java.awt.Color(230, 7, 12));
         btnOpciones.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         btnOpciones.setForeground(new java.awt.Color(255, 255, 255));
         btnOpciones.setText("Opciones!");
@@ -104,7 +105,7 @@ public class Micronucleo extends javax.swing.JFrame
         getContentPane().add(btnOpciones);
         btnOpciones.setBounds(500, 190, 190, 40);
 
-        btnServidor.setBackground(new java.awt.Color(255, 102, 0));
+        btnServidor.setBackground(new java.awt.Color(230, 7, 12));
         btnServidor.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         btnServidor.setForeground(new java.awt.Color(255, 255, 255));
         btnServidor.setText("Nueva Sala de Juego!");
@@ -126,7 +127,7 @@ public class Micronucleo extends javax.swing.JFrame
         lblIP.setForeground(new java.awt.Color(255, 255, 255));
         lblIP.setText("IP:");
 
-        cmbIP.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbIP.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbIP.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 cmbIPItemStateChanged(evt);
@@ -155,7 +156,7 @@ public class Micronucleo extends javax.swing.JFrame
         );
 
         getContentPane().add(pnlRed);
-        pnlRed.setBounds(10, 10, 210, 66);
+        pnlRed.setBounds(10, 10, 210, 56);
 
         lblVersion.setFont(new java.awt.Font("Britannic Bold", 0, 14)); // NOI18N
         lblVersion.setForeground(new java.awt.Color(255, 255, 255));
@@ -293,6 +294,7 @@ public class Micronucleo extends javax.swing.JFrame
     }//GEN-LAST:event_cmbIPItemStateChanged
 
     private void btnOpcionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpcionesActionPerformed
+        new Opciones(this);        
        
     }//GEN-LAST:event_btnOpcionesActionPerformed
 
@@ -357,6 +359,7 @@ public class Micronucleo extends javax.swing.JFrame
             c.cambiaImagenSonido();
         for (Servidor s:servidores)
             s.cambiaImagenSonido();
+        
         
         
     }

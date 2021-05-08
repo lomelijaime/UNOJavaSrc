@@ -5,8 +5,6 @@
  */
 package unodistribuido;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
 /**
@@ -15,14 +13,17 @@ import javax.swing.ImageIcon;
  */
 public class Splash extends javax.swing.JFrame implements Runnable {
     Thread t;
-    private Micronucleo  micronucleo;
+    
     
     public Splash() {
         initComponents();
-    }
-    public void run(){
-        this.setLocationRelativeTo(null);
         this.setVisible(true);
+        this.setSize(716,358);
+        this.setLocationRelativeTo(null);
+    }
+    
+    @Override
+    public void run(){
         try {
             t.sleep(5000);
         } catch (InterruptedException ex) {}
@@ -46,9 +47,9 @@ public class Splash extends javax.swing.JFrame implements Runnable {
         lblFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setAlwaysOnTop(true);
         setIconImage(new ImageIcon(getClass().getResource("imagenes/fondos/logo.png")).getImage());
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(716, 358));
         setResizable(false);
         getContentPane().setLayout(null);
 

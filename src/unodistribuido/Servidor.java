@@ -78,7 +78,7 @@ public final class Servidor extends javax.swing.JFrame implements Runnable {
     private final int JUGADORES_MAX=3;
     
     private String[] nombresCol= {"No.","Avatar", "Nickname", "IP","ID","Listo"};
-    private String[] nombres={"KAREN","ANGEL","ALLAN","MARIA","ROSA","LUIS"};
+    private String[] nombres={"JOEL","JENNIE","OSVALDO","YOLANDA","DIANA","MARIO"};
     private Timer tmrContador;
     private Barajeador barajeador;
     

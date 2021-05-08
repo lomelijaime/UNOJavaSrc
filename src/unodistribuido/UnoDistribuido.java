@@ -17,7 +17,8 @@ public class UnoDistribuido {
     public static void main(String[] args) 
     {
         
-            new Micronucleo();
+        new Thread( new Splash()).start();
+
         
     }
     
