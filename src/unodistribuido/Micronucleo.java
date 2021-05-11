@@ -160,7 +160,7 @@ public class Micronucleo extends javax.swing.JFrame
 
         lblVersion.setFont(new java.awt.Font("Britannic Bold", 0, 14)); // NOI18N
         lblVersion.setForeground(new java.awt.Color(255, 255, 255));
-        lblVersion.setText("VERSION 0.1 (Solo fines educativos)");
+        lblVersion.setText("VERSION 2.1 (Solo fines educativos)");
         getContentPane().add(lblVersion);
         lblVersion.setBounds(20, 340, 240, 15);
 

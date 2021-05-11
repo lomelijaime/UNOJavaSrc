@@ -75,7 +75,7 @@ public final class Servidor extends javax.swing.JFrame implements Runnable {
     private Mensaje resp;
     
     private final Thread hiloServidor;
-    private final int JUGADORES_MAX=3;
+    private final int JUGADORES_MAX=4;
     
     private String[] nombresCol= {"No.","Avatar", "Nickname", "IP","ID","Listo"};
     private String[] nombres={"JOEL","JENNIE","OSVALDO","YOLANDA","DIANA","MARIO"};
