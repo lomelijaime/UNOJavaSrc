@@ -7,8 +7,8 @@ package unodistribuido;
 
 public class DatosServidor 
 {
-    private int idProceso;
-    private String IP;
+    private final int idProceso;
+    private final String IP;
     public DatosServidor(int idProceso,String IP)
     {
         this.IP=IP;

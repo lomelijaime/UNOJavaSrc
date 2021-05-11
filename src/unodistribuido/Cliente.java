@@ -15,23 +15,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import javax.swing.ImageIcon;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import MiTabla.IconCellRenderer;
 import java.awt.Font;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JLabel;
+import javax.swing.table.TableColumnModel;
+import utilidades.Pila;
 /**
  *
  * @author Luis
@@ -60,60 +51,74 @@ import javax.swing.JLabel;
  * 
 */
 
+/**
+ * RESGUARDO DEL CLIENTE
+ * 
+ * cadena conectar(in entero,in cadena)
+ * booleano cerrar(in entero,in cadena)
+ * booleano desconectar(in entero,in cadena)
+ * vacio votarInicio(vacio)
+ * vacia ejecutaGrito(vacio)
+ * vacia cancelaVoto(vacio)
+ * 
+ */
 
+public final class Cliente extends javax.swing.JFrame implements Runnable {
 
-public class Cliente extends javax.swing.JFrame implements Runnable {
-
-    private Micronucleo micronucleo;
-    private int idProceso;
-    private int CODOP;
-    private boolean activo;
-    private Thread hiloCliente;
-    private HiloEscuchador hiloEscuchador;
-    private int foto;
-    private Clip sonido;
-        
-
+    private final Micronucleo micronucleo;
+    private final int idProceso;
+    private final int foto;
+    private final Thread hiloCliente;
+    private final HiloEscuchador hiloEscuchador;
+    private final String[] nombres={"JOEL","JENNIE","OSVALDO","YOLANDA","DIANA","MARIO"};
+    private final String[] nombresCol= {"Voto","Avatar", "Nombre", "# Cartas"};
+    private final ArrayList<CartaGrafica> cartas;
     
+    private int CODOP;
+    private Clip sonido;
+    private boolean activo;
     private Point initialClick;
-    private String[] nombresCol= {"Avatar", "Nombre", "# Cartas"};
     private DefaultTableModel modelo;
-    private String[] nombres={"JOEL","JENNIE","OSVALDO","YOLANDA","DIANA","MARIO"};
-    private ArrayList<CartaGrafica> cartas;
     private boolean banGrito;
    
     
-    public Cliente(Micronucleo micronucleo,Avatar avatar,int idProceso) {
+    public Cliente(Micronucleo micronucleo,Avatar avatar,int idProceso) 
+    {
         initComponents();
         this.micronucleo=micronucleo;
         this.idProceso=idProceso;
         activo=true;
         CODOP=0;
-        cartas=new ArrayList<CartaGrafica>();
+        cartas=new ArrayList<>();
         setSize(1080, 608);
         Toolkit tk=Toolkit.getDefaultToolkit();
         Dimension d=tk.getScreenSize();
         setLocation((d.width-getSize().width)/2,(d.height-getSize().height)/2);
         txtIDCliente.setText(String.valueOf(idProceso));
-        lblNick.setText(avatar.getNick());
+        lblNick.setText(nombres[avatar.getAvatar()-1]);
         Image img= new ImageIcon(getClass().getResource("imagenes/avatar/"+avatar.getAvatar()+".png")).getImage();
         ImageIcon img2=new ImageIcon(img.getScaledInstance(91, 91, Image.SCALE_FAST));
         lblFoto.setIcon(img2);
         foto=avatar.getAvatar();
         avatar.dispose();
+        cambiaImagenSonido();
         
         modelo=new DefaultTableModel();
         modelo.setColumnIdentifiers(nombresCol);
         tblJugadores.setModel(modelo);
         tblJugadores.setDefaultRenderer(Object.class,new IconCellRenderer());
         
-       
+        TableColumnModel columnModel = tblJugadores.getColumnModel();
+        columnModel.getColumn(0).setPreferredWidth(40);
+         
         addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 initialClick = e.getPoint();
                 getComponentAt(initialClick);
             }
         });
+        
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) 
@@ -167,6 +172,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         lblMazo = new javax.swing.JLabel();
         btnGrito = new javax.swing.JButton();
         btnCerrar = new javax.swing.JButton();
+        lblSonido = new javax.swing.JLabel();
         lblFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -198,12 +204,12 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         scrJugadores.setViewportView(tblJugadores);
 
         pnlJugadores.add(scrJugadores);
-        scrJugadores.setBounds(10, 20, 250, 190);
+        scrJugadores.setBounds(10, 20, 290, 190);
 
         getContentPane().add(pnlJugadores);
-        pnlJugadores.setBounds(770, 10, 270, 220);
+        pnlJugadores.setBounds(730, 10, 310, 220);
 
-        pnlJugador.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 3), "Datos del Jugador", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Britannic Bold", 1, 14), new java.awt.Color(255, 255, 255))); // NOI18N
+        pnlJugador.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 3), "Datos del jugador", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Britannic Bold", 1, 14), new java.awt.Color(255, 255, 255))); // NOI18N
         pnlJugador.setOpaque(false);
         pnlJugador.setLayout(null);
 
@@ -253,7 +259,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         pnlServidor.add(lblIP);
         lblIP.setBounds(20, 30, 90, 20);
         pnlServidor.add(txtIP);
-        txtIP.setBounds(130, 30, 110, 20);
+        txtIP.setBounds(130, 30, 110, 22);
 
         lblID.setFont(new java.awt.Font("Britannic Bold", 1, 14)); // NOI18N
         lblID.setForeground(new java.awt.Color(255, 255, 255));
@@ -261,7 +267,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         pnlServidor.add(lblID);
         lblID.setBounds(20, 70, 90, 20);
         pnlServidor.add(txtID);
-        txtID.setBounds(130, 70, 110, 20);
+        txtID.setBounds(130, 70, 110, 22);
 
         btnConectar.setBackground(new java.awt.Color(230, 7, 12));
         btnConectar.setFont(new java.awt.Font("Britannic Bold", 1, 12)); // NOI18N
@@ -273,7 +279,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
             }
         });
         pnlServidor.add(btnConectar);
-        btnConectar.setBounds(50, 110, 160, 21);
+        btnConectar.setBounds(50, 110, 160, 18);
 
         getContentPane().add(pnlServidor);
         pnlServidor.setBounds(50, 420, 270, 150);
@@ -283,7 +289,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         lblCarta.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 3, true));
         lblCarta.setEnabled(false);
         getContentPane().add(lblCarta);
-        lblCarta.setBounds(590, 50, 110, 160);
+        lblCarta.setBounds(550, 50, 110, 160);
 
         btnDesconectar.setBackground(new java.awt.Color(255, 102, 0));
         btnDesconectar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/otros/desconectar.png"))); // NOI18N
@@ -299,14 +305,14 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         btnReto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/otros/reto.png"))); // NOI18N
         btnReto.setEnabled(false);
         getContentPane().add(btnReto);
-        btnReto.setBounds(610, 520, 60, 60);
+        btnReto.setBounds(640, 520, 60, 60);
 
         lblMazo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/baraja/fondo2.png"))); // NOI18N
         lblMazo.setText("jLabel2");
         lblMazo.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         lblMazo.setEnabled(false);
         getContentPane().add(lblMazo);
-        lblMazo.setBounds(450, 70, 90, 135);
+        lblMazo.setBounds(410, 70, 90, 135);
 
         btnGrito.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/otros/uno.png"))); // NOI18N
         btnGrito.setEnabled(false);
@@ -316,7 +322,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
             }
         });
         getContentPane().add(btnGrito);
-        btnGrito.setBounds(420, 520, 60, 60);
+        btnGrito.setBounds(480, 520, 60, 60);
 
         btnCerrar.setBackground(new java.awt.Color(255, 102, 0));
         btnCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/otros/cerrar.png"))); // NOI18N
@@ -328,15 +334,24 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         getContentPane().add(btnCerrar);
         btnCerrar.setBounds(960, 520, 60, 60);
 
+        lblSonido.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSonido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/otros/sonido.png"))); // NOI18N
+        lblSonido.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblSonido.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblSonidoMouseClicked(evt);
+            }
+        });
+        getContentPane().add(lblSonido);
+        lblSonido.setBounds(350, 525, 50, 50);
+
         lblFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/fondos/fondogrande.png"))); // NOI18N
         getContentPane().add(lblFondo);
         lblFondo.setBounds(0, 0, 1080, 608);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    
-    
+  
     private void btnDesconectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDesconectarActionPerformed
         CODOP=5;
         notificar();
@@ -354,6 +369,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
             activo=false;
             hiloEscuchador.notificar();
             notificar();
+            micronucleo.eliminaCliente(this);
             dispose();
         }
         
@@ -376,9 +392,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         {
             CODOP=6;
             btnConectar.setText("Cancelar voto!");
-            
             notificar();
-            
         }
         else
         {
@@ -400,6 +414,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
             activo=false;
             notificar();
             hiloEscuchador.notificar();
+            micronucleo.eliminaCliente(this);
             dispose();
         }
         
@@ -413,6 +428,35 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         notificar();       
     }//GEN-LAST:event_btnGritoActionPerformed
 
+    private void lblSonidoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblSonidoMouseClicked
+        micronucleo.cambiaImagenSonido();
+    }//GEN-LAST:event_lblSonidoMouseClicked
+   
+    public void cerrar()
+    {
+         if (!txtIP.getText().equals(""))
+        {
+            CODOP=2;
+            notificar();
+            
+        }
+        else
+        {
+            activo=false;
+            hiloEscuchador.notificar();
+            notificar();
+            micronucleo.eliminaCliente(this);
+            dispose();
+        }
+    }
+    public void cambiaImagenSonido()
+    {
+        if (!micronucleo.getPlayer().getSonando())
+            lblSonido.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/nosonido.png")));
+        else
+            lblSonido.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/sonido.png")));
+       
+    }
    public Cliente getMe()
    {
        return this;
@@ -421,7 +465,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
    @Override
     public void run() 
     {
-        String mensaje="";
+        String mensaje;
         byte msg[];
         while(activo)
         {
@@ -434,80 +478,42 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
             }
             if (!activo)
                 return;
-            mensaje="";
             switch(CODOP)
             {
                 case 1:{
-                    mensaje= txtID.getText()+"|"+idProceso+"|"+"1|"+foto+"&"+nombres[foto-1];
-                    msg=mensaje.getBytes();
-                    micronucleo.send(Integer.parseInt(txtID.getText()), txtIP.getText(),msg);
-                    Mensaje resp=micronucleo.receive(idProceso, msg);
-                    
-                    switch(resp.getCodop())
+                    char valor[];
+                    //mandamos a llamar al resguardo del cliente
+                    valor=conectar(foto,nombres[foto-1].toCharArray());
+                    if (valor!=null)
                     {
-                        case 3:
-                        {
-                            txtIP.setEditable(false);
-                            txtIP.setFont(new java.awt.Font("Arial", 1, 12));
-                            txtIP.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                            txtID.setEditable(false);
-                            txtID.setFont(new java.awt.Font("Arial", 1, 12));
-                            txtID.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-                            btnConectar.setText("Votar para iniciar!");
-                            btnDesconectar.setEnabled(true);
-                            break;
-                        }
-                        case 4:
-                        {
-                            new Aviso(this,resp.getMensaje().trim(),0);
-                            break;
-                        }
+                        new Aviso(this,String.valueOf(valor).trim(),0);
                     }
                     break;
                 }
                 case 2:{
-                    mensaje= txtID.getText()+"|"+idProceso+"|"+"2|"+foto+"&"+nombres[foto-1];
-                    msg=mensaje.getBytes();
-                    micronucleo.send(Integer.parseInt(txtID.getText()), txtIP.getText(),msg);
-                    Mensaje resp=micronucleo.receive(idProceso, msg);
-                    if (resp.getCodop()==8)
+                    if (!cerrar(foto,nombres[foto-1].toCharArray()))
                     {
-                        activo=false;
-                        hiloEscuchador.notificar();
-                        micronucleo.requestFocus();
-                        dispose();
+                       new Aviso(this,"Error al intentar desconectar el jugador!",0); 
                     }
                     break;
-                     
                 }
                 case 5:{
-                    mensaje= txtID.getText()+"|"+idProceso+"|"+"5|"+foto+"&"+nombres[foto-1];
-                    msg=mensaje.getBytes();
-                    micronucleo.send(Integer.parseInt(txtID.getText()), txtIP.getText(),msg);
-                    Mensaje resp=micronucleo.receive(idProceso, msg);
-                    if (resp.getCodop()==8)
+                    if (!desconectar(foto,nombres[foto-1].toCharArray()))
                     {
-                        reiniciar();
-                        quitaCartas();
+                       new Aviso(this,"Error al intentar desconectar el jugador!",0); 
                     }
                     break;
                 }
                 case 6:{
-                    mensaje= txtID.getText()+"|"+idProceso+"|"+"6|iniciar";
-                    msg=mensaje.getBytes();
-                    micronucleo.send(Integer.parseInt(txtID.getText()), txtIP.getText(),msg);
+                    votarInicio();
                     break;
                 }
                 case 13:{
-                    mensaje= txtID.getText()+"|"+idProceso+"|"+"13|grita";
-                    msg=mensaje.getBytes();
-                    micronucleo.send(Integer.parseInt(txtID.getText()), txtIP.getText(),msg);
+                    ejecutaGrito();
                     break;
                 }
                  case 15:{
-                    mensaje= txtID.getText()+"|"+idProceso+"|"+"15|cancela";
-                    msg=mensaje.getBytes();
-                    micronucleo.send(Integer.parseInt(txtID.getText()), txtIP.getText(),msg);
+                    cancelaVoto();
                     break;
                 }
             }
@@ -517,27 +523,18 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
     
     public void grita()
     {
-        try {
-            
-            sonido = AudioSystem.getClip();
-            sonido.open(AudioSystem.getAudioInputStream(getClass().getResource("sonidos/uno.wav")));
-            if (!sonido.isRunning())
-                sonido.start();
-        } catch (LineUnavailableException ex) {
-            
-        } catch (UnsupportedAudioFileException ex) {
-            
-        } catch (IOException ex) {
-            
+            AudioFilePlayer player;
+            player = new AudioFilePlayer(getClass().getResource("sonidos/uno.wav"),micronucleo,0);
+           
+    
+    }
+    public void notificar()
+    {
+        synchronized(hiloCliente)
+        {
+            hiloCliente.notify();
         }
     }
-        public void notificar()
-        {
-            synchronized(hiloCliente)
-            {
-                hiloCliente.notify();
-            }
-        }
     
     public int getID()
     {
@@ -547,16 +544,15 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
     {
         return activo;
     }
+    
     protected void agregaCarta(Carta c)
     {
         int i,offSetX,tamCarta;
-        tamCarta=90;
         CartaGrafica tmp;
         for (i=0;i<cartas.size();i++)
             pnlCartas.remove(cartas.get(i));
         cartas.add(new CartaGrafica(c,this,cartas.size()));
-        tmp=cartas.get(0);
-          tamCarta=577/cartas.size();
+        tamCarta=577/cartas.size();
         offSetX=pnlCartas.getSize().width;
         offSetX-=(tamCarta*(cartas.size()-1))+90;
         offSetX/=2;
@@ -570,17 +566,42 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         repaint();
         
     }
-    protected void quitaCarta()
+    protected void agregaCartas(Carta c)
     {
-        if (cartas.size()<1)
-            return;
         int i,offSetX,tamCarta;
-        tamCarta=120;
         CartaGrafica tmp;
         for (i=0;i<cartas.size();i++)
             pnlCartas.remove(cartas.get(i));
+        cartas.add(new CartaGrafica(c,this,cartas.size()));
+        tamCarta=577/cartas.size();
+        offSetX=pnlCartas.getSize().width;
+        offSetX-=(tamCarta*(cartas.size()-1))+90;
+        offSetX/=2;
+        for (i=cartas.size()-1;i>=0;i--)
+        {
+            tmp=cartas.get(i);
+            tmp.setPoint(new Point((offSetX)+(tamCarta*i),48));
+            tmp.setLocation(pnlCartas.getSize().width+45,48);
+            if(cartas.size()>6)
+                    tmp.activaTimers(15);
+            pnlCartas.add(tmp,0);
+        }
+        if (cartas.size()>6)
+        {
+            AudioFilePlayer player;
+            player = new AudioFilePlayer(getClass().getResource("sonidos/tirarCartas.wav"),micronucleo,0);
+        }
+        repaint();
+        
+    }
+    protected void quitaCarta()
+    {
+        CartaGrafica tmp;
+        int i,offSetX,tamCarta;
+        for (i=0;i<cartas.size();i++)
+            pnlCartas.remove(cartas.get(i));
         cartas.remove(cartas.size()-1);
-        if (cartas.size()==0)
+        if (cartas.isEmpty())
         {
             repaint();
             return;
@@ -600,20 +621,17 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
     }
     protected void quitaCarta(CartaGrafica c)
     {
-        if (cartas.size()<1)
-            return;
         int i,offSetX,tamCarta;
-        tamCarta=120;
         CartaGrafica tmp;
         for (i=0;i<cartas.size();i++)
             pnlCartas.remove(cartas.get(i));
         cartas.remove(c);
-        if (cartas.size()==0)
+        if (cartas.isEmpty())
         {
             repaint();
             return;
         }
-       tamCarta=770/cartas.size();
+        tamCarta=770/cartas.size();
         offSetX=pnlCartas.getSize().width;
         offSetX-=(tamCarta*(cartas.size()-1))+120;
         offSetX/=2;
@@ -623,8 +641,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
             tmp.setLocation((offSetX)+(tamCarta*i),65);
             pnlCartas.add(tmp,0);
         }
-        repaint();
-        
+        repaint();    
     }
      protected void ponInicial(String cad)
      {
@@ -667,7 +684,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         btnReto.setEnabled(false);
         btnGrito.setEnabled(false);
         btnConectar.setEnabled(true);
-        btnDesconectar.setEnabled(false);
+        btnDesconectar.setEnabled(true);
         btnConectar.setText("Votar para iniciar!");
         Image img= new ImageIcon(getClass().getResource("imagenes/baraja/fondo.png")).getImage();
         ImageIcon img2=new ImageIcon(img.getScaledInstance(90, 135, Image.SCALE_FAST));
@@ -683,17 +700,22 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         btnReto.setEnabled(true);
         btnGrito.setEnabled(true);
         btnDesconectar.setEnabled(true);
+        btnConectar.setEnabled(false);
         for (int i = 0; i < tblJugadores.getRowCount(); i++) {
-            modelo.setValueAt("7", i, 2);
+            modelo.setValueAt("7", i, 3);
         }
     }
     
-     protected void agregaJugador(String foto,String avatar)
+     protected void agregaJugador(String foto,String avatar,String voto)
     {
-        Object[] fila=new Object[3];
-        fila[0]=new JLabel(new ImageIcon(getClass().getResource("imagenes/avatar2/"+foto+".png")));
-        fila[1] = avatar;
-        fila[2] = "-";
+        Object[] fila=new Object[4];
+        if (voto.equals("0"))
+            fila[0]= new JLabel(new ImageIcon(getClass().getResource("imagenes/otros/no.png")));
+        else
+            fila[0]= new JLabel(new ImageIcon(getClass().getResource("imagenes/otros/ok.png")));
+        fila[1]=new JLabel(new ImageIcon(getClass().getResource("imagenes/avatar2/"+foto+".png")));
+        fila[2] = avatar;
+        fila[3] = "-";
         modelo.addRow(fila);
         
     }
@@ -704,14 +726,156 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
         modelo.setColumnIdentifiers(nombresCol);
         tblJugadores.setModel(modelo);
         tblJugadores.setDefaultRenderer(Object.class,new IconCellRenderer());
+         TableColumnModel columnModel = tblJugadores.getColumnModel();
+        columnModel.getColumn(0).setPreferredWidth(40);
     }
     protected void quitaCartas()
     {
-        
-            pnlCartas.removeAll();
+        pnlCartas.removeAll();
         pnlCartas.repaint();
         while(cartas.size()>0)
-            cartas.remove(0);
+        cartas.remove(0);
+    }
+    
+    
+    //SECCION DEL RESGUARDO DEL CLIENTE
+    
+    private char[] conectar (int foto, char[] nombre)
+    {
+        char[] valor=null;
+        String mensaje;
+        byte[] msg;
+        Pila pila= new Pila();
+        //aqui metemos los parametros a la pila
+        pila.push(nombre);
+        pila.push(foto);
+        //preparamos el mensaje
+        mensaje= txtID.getText()+"|"+idProceso+"|"+"1|";
+        //agregamos los parametros
+        while(!pila.empty())
+        {
+            mensaje+=String.valueOf(pila.pop());
+            if (!pila.empty())
+                mensaje+="&";
+        }
+        //convertimos a bytes
+        msg=mensaje.getBytes();
+        micronucleo.send(Integer.parseInt(txtID.getText()), txtIP.getText(),msg);
+        Mensaje resp=micronucleo.receive(idProceso, msg);
+        //extraemos el resultado y revisamos la respuesta
+        switch(resp.getCodop())
+        {
+            case 3:
+            {
+                txtIP.setEditable(false);
+                txtIP.setFont(new java.awt.Font("Arial", 1, 12));
+                txtIP.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+                txtID.setEditable(false);
+                txtID.setFont(new java.awt.Font("Arial", 1, 12));
+                txtID.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+                btnConectar.setText("Votar para iniciar!");
+                btnDesconectar.setEnabled(true);
+                break;
+            }
+            case 4:
+            {
+                //extraemos los resultados y los metemos a la pila
+                pila.push(resp.getMensaje().toCharArray());
+                //Como no hay mas procesamiento de la salida
+                //regresamos lo que esta contenido en la pila
+                valor=String.valueOf(pila.pop()).toCharArray();
+                break;
+            }
+        }
+        return valor;
+    }
+    
+    private boolean cerrar(int foto, char[] nombre)
+    {
+        String mensaje;
+        byte[] msg;
+        Pila pila= new Pila();
+        //aqui metemos los parametros a la pila
+        pila.push(nombres[foto-1]);
+        pila.push(foto);
+        //preparamos el mensaje
+        mensaje= txtID.getText()+"|"+idProceso+"|"+"2|";
+        //agregamos los parametros
+        while(!pila.empty())
+        {
+            mensaje+=String.valueOf(pila.pop());
+            if (!pila.empty())
+                mensaje+="&";
+        }
+        //convertimos a bytes
+        msg=mensaje.getBytes();
+        micronucleo.send(Integer.parseInt(txtID.getText()), txtIP.getText(),msg);
+        Mensaje resp=micronucleo.receive(idProceso, msg);     
+        if (resp.getCodop()==8)
+        {
+            activo=false;
+            hiloEscuchador.notificar();
+            micronucleo.requestFocus();
+            dispose();
+            return true;
+        }
+        return false;
+    }
+    
+    private void votarInicio()
+    {
+        String mensaje;
+        byte[] msg;
+        mensaje= txtID.getText()+"|"+idProceso+"|"+"6|";
+        msg=mensaje.getBytes();
+        micronucleo.send(Integer.parseInt(txtID.getText()), txtIP.getText(),msg);
+    }
+    
+    public boolean desconectar(int foto, char[] nombre)
+    {
+        String mensaje;
+        byte[] msg;
+        Pila pila= new Pila();
+        //aqui metemos los parametros a la pila
+        pila.push(nombres[foto-1]);
+        pila.push(foto);
+        //preparamos el mensaje
+        mensaje= txtID.getText()+"|"+idProceso+"|"+"5|";
+        //agregamos los parametros
+        while(!pila.empty())
+        {
+            mensaje+=String.valueOf(pila.pop());
+            if (!pila.empty())
+                mensaje+="&";
+        }
+        //convertimos a bytes
+        msg=mensaje.getBytes();
+        micronucleo.send(Integer.parseInt(txtID.getText()), txtIP.getText(),msg);
+        Mensaje resp=micronucleo.receive(idProceso, msg);
+        if (resp.getCodop()==8)
+        {
+            reiniciar();
+            quitaCartas();
+            return true;
+        }
+        return false;
+    }
+    private void ejecutaGrito()
+    {
+        String mensaje;
+        byte[] msg;
+        mensaje= txtID.getText()+"|"+idProceso+"|"+"13|";
+        msg=mensaje.getBytes();
+        micronucleo.send(Integer.parseInt(txtID.getText()), txtIP.getText(),msg);
+    }
+    
+    private void cancelaVoto()
+    {
+        String mensaje;
+        byte[] msg;
+        mensaje= txtID.getText()+"|"+idProceso+"|"+"15|";
+        msg=mensaje.getBytes();
+        micronucleo.send(Integer.parseInt(txtID.getText()), txtIP.getText(),msg);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -728,6 +892,7 @@ public class Cliente extends javax.swing.JFrame implements Runnable {
     private javax.swing.JLabel lblIP;
     private javax.swing.JLabel lblMazo;
     private javax.swing.JLabel lblNick;
+    private javax.swing.JLabel lblSonido;
     private javax.swing.JPanel pnlCartas;
     private javax.swing.JPanel pnlJugador;
     private javax.swing.JPanel pnlJugadores;

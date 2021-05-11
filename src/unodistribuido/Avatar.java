@@ -18,10 +18,12 @@ import javax.swing.ImageIcon;
  */
 public class Avatar extends javax.swing.JDialog {
 
-    private Micronucleo  micronucleo;
+    private final Micronucleo  micronucleo;
+    private final String[] nombres={"JOEL","JENNIE","OSVALDO","YOLANDA","DIANA","MARIO"};
+
     private int avatar;
     private Point initialClick;
-    private String[] nombres={"JOEL","JENNIE","OSVALDO","YOLANDA","DIANA","MARIO"};
+
 
     public Avatar(Micronucleo micronucleo) {
         initComponents();
@@ -32,8 +34,9 @@ public class Avatar extends javax.swing.JDialog {
         this.setLocationRelativeTo(micronucleo);
         setVisible(true);
         cargaImg();
-        lblNick.setText("JOEL");
+        lblNick.setText(nombres[0]);
         addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 initialClick = e.getPoint();
                 getComponentAt(initialClick);
@@ -173,7 +176,7 @@ public class Avatar extends javax.swing.JDialog {
     private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
        
             int valor=(int)(Math.random()*Integer.MAX_VALUE);
-            new Cliente(micronucleo,this,valor);
+            micronucleo.almacenaCliente(new Cliente(micronucleo,this,valor));
             setVisible(false);
        
     }//GEN-LAST:event_btnCrearActionPerformed

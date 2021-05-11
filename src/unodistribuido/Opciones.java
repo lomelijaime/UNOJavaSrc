@@ -5,12 +5,18 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.ArrayList;
+import javax.swing.ImageIcon;
 
 
 public class Opciones extends javax.swing.JFrame {
 
     private Micronucleo  micronucleo;
     private Point initialClick;
+
+
+    private AudioFilePlayer fondo;
+
     public Opciones(Micronucleo micronucleo) {
         
         initComponents();
@@ -20,6 +26,7 @@ public class Opciones extends javax.swing.JFrame {
          setVisible(true);
          //this.getContentPane().setBackground(new Color(230,7,12));
          setSize(320,180);
+         cambiaImagenSonido();
 
          
          addMouseListener(new MouseAdapter() {
@@ -47,12 +54,30 @@ public class Opciones extends javax.swing.JFrame {
             getMe().setLocation(X, Y);
         }
     });
+        
     }
 
     private Opciones getMe()
     {
         return this;
     }
+    
+    public AudioFilePlayer getPlayer()
+    {
+        return fondo;
+    }
+    
+    public void cambiaImagenSonido()
+    {
+        if (!micronucleo.getPlayer().getSonando())
+            lblSonido.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/nosonido.png")));
+        else
+            lblSonido.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/sonido.png")));
+       
+    }
+    
+    
+    
     
     
     
@@ -65,8 +90,7 @@ public class Opciones extends javax.swing.JFrame {
         btnRegresar = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel2 = new javax.swing.JLabel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        lblSonido = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -116,26 +140,15 @@ public class Opciones extends javax.swing.JFrame {
         jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 10, 121, -1));
 
-        jRadioButton1.setBackground(new java.awt.Color(230, 7, 12));
-        jRadioButton1.setFont(new java.awt.Font("Yu Gothic Medium", 1, 11)); // NOI18N
-        jRadioButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jRadioButton1.setSelected(true);
-        jRadioButton1.setText("Musica");
-        jRadioButton1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton1ActionPerformed(evt);
+        lblSonido.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSonido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/otros/sonido.png"))); // NOI18N
+        lblSonido.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblSonido.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblSonidoMouseClicked(evt);
             }
         });
-        getContentPane().add(jRadioButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 50, 137, -1));
-
-        jRadioButton2.setBackground(new java.awt.Color(230, 7, 12));
-        jRadioButton2.setFont(new java.awt.Font("Yu Gothic Medium", 1, 11)); // NOI18N
-        jRadioButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jRadioButton2.setSelected(true);
-        jRadioButton2.setText("Efectos de sonidos");
-        jRadioButton2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        getContentPane().add(jRadioButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 80, -1, -1));
+        getContentPane().add(lblSonido, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 50, -1, -1));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/fondos/fondochico.png"))); // NOI18N
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 320, 180));
@@ -152,7 +165,6 @@ public class Opciones extends javax.swing.JFrame {
     private void btnAcercaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAcercaActionPerformed
         Acerca abrir = new Acerca();
         abrir.setVisible(true);
-        
     }//GEN-LAST:event_btnAcercaActionPerformed
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
@@ -160,9 +172,10 @@ public class Opciones extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_btnRegresarActionPerformed
 
-    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton1ActionPerformed
+    private void lblSonidoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblSonidoMouseClicked
+        micronucleo.cambiaImagenSonido();
+        cambiaImagenSonido();
+    }//GEN-LAST:event_lblSonidoMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAcerca;
@@ -170,8 +183,7 @@ public class Opciones extends javax.swing.JFrame {
     private javax.swing.JButton btnRegresar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel lblSonido;
     // End of variables declaration//GEN-END:variables
 }
