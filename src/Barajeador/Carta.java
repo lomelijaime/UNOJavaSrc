@@ -13,7 +13,7 @@ public class Carta
     * 3 = AZUL
     * 4 = AMARILLO
     */
-    private int color;
+    private final int color;
     /*
     * VALORES DE CARTAS (NO CARTAS ESPECIALES)
     *
@@ -21,6 +21,7 @@ public class Carta
     * 10: CAMBIO DE SENTIDO
     * 11: NO JUEGA
     * 12: COME 2 
+    * 13: COMODIN CAMBIA DE COLOR
     *
     * VALORES DE CARTAS ESPECIALES
     *
@@ -28,7 +29,7 @@ public class Carta
     * 1: COMODIN COME 4
     *
     */
-    private int valor;
+    private final int valor;
     public Carta()
     {
     
@@ -40,8 +41,8 @@ public class Carta
     }
     public Carta (String carta)
     {
-        String valor;
-        valor=carta.substring(1);
+        String val;
+        val=carta.substring(1).trim();
         switch (carta.charAt(0))
          {
                 case 'E': this.color=0; break; //ESPECIAL (ESPECIAL)
@@ -49,9 +50,10 @@ public class Carta
                 case 'G': this.color=2; break; //GREEN (VERDE)
                 case 'B': this.color=3; break; //BLUE (AZUL)
                 case 'Y': this.color=4; break; //YELLOW (AMARILLO)
+                default: this.color=-1; break;
          }
         
-        this.valor=Integer.parseInt(valor);
+        this.valor=Integer.parseInt(val);
         
     }
     public Carta(int color, int valor)
@@ -69,7 +71,7 @@ public class Carta
     }
     public String getCarta()
     {
-        String cad="";
+        String cad="",val;
             switch(getColor())
             {
                 case 0: cad+="E"; break; //ESPECIAL (ESPECIAL)
@@ -78,9 +80,9 @@ public class Carta
                 case 3: cad+="B"; break; //BLUE (AZUL)
                 case 4: cad+="Y"; break; //YELLOW (AMARILLO)
             }
-            String valor=String.valueOf(getValor());
-            if(getValor()<10) valor="0"+valor;
-            cad+=valor;
+            val=String.valueOf(getValor());
+            if(getValor()<10) val="0"+val;
+            cad+=val;
         return cad;
     }
     @Override

@@ -10,7 +10,18 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -24,7 +35,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 
 
 /**
@@ -42,225 +52,9 @@ public class Micronucleo extends javax.swing.JFrame
     private RecibePaquetes recibePaquetes;
     private Point initialClick;
     private ArrayList<Servidor> servidores;
-   
-    public Micronucleo() 
-    {
-        boolean ban=false;
-        initComponents();
-        
-        servidores=new ArrayList<Servidor>();
-        
-        try
-        {
-            dsReceive = new DatagramSocket(RECEPCION);
-            dsReceive.setSoTimeout(3000);
-        } catch(SocketException se)
-        {
-              new Aviso(this,"No se puede abrir el socket del servidor",1);
-              ban=true;
-        }
-        try
-        {
-            dsSend = new DatagramSocket(ENVIO);
-            ipServidor = InetAddress.getByName("127.0.0.1");                   
-        } catch(SocketException se)
-        {
-              new Aviso(this,"No se puede abrir el socket del cliente",1);
-              ban=true;
-        }catch(UnknownHostException uhe)
-        {
-            new Aviso(this,"No se puede obtener la IP del servidor",1);
-            ban=true;
-        }   
-        recibePaquetes=new RecibePaquetes(dsReceive,this);
-        tablaLocal=new Hashtable();
-        tablaRemota=new Hashtable();
-        cmbIP.setModel( new javax.swing.DefaultComboBoxModel(getMachineIP()));
-        setSize(716,358);
-        Toolkit tk=Toolkit.getDefaultToolkit();
-        Dimension d=tk.getScreenSize();
-        setLocation((d.width-getSize().width)/2,(d.height-getSize().height)/2);
-        
-         this.addWindowListener(new WindowAdapter(){
-                @Override
-                public void windowClosing(WindowEvent e)
-		{
-			tablaLocal.clear();
-			tablaRemota.clear();
-			recibePaquetes.paraHilo();
-			System.exit(0);
-		}
-        });
-         
-         addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                initialClick = e.getPoint();
-                getComponentAt(initialClick);
-            }
-        });
-        
-        addMouseMotionListener(new MouseMotionAdapter() {
-        @Override
-        public void mouseDragged(MouseEvent e) {
-
-            // get location of Window
-            int thisX = getMe().getLocation().x;
-            int thisY = getMe().getLocation().y;
-
-            // Determine how much the mouse moved since the initial click
-            int xMoved = e.getX() - initialClick.x;
-            int yMoved = e.getY() - initialClick.y;
-
-            // Move window to this position
-            int X = thisX + xMoved;
-            int Y = thisY + yMoved;
-            getMe().setLocation(X, Y);
-        }
-    });
-         
-        if(!ban)
-        {
-            setVisible(true);
-            recibePaquetes.start();
-        }
-        
-    } 
-    public void almacenaDestinoRemoto(String ip, int id)
-    {
-        tablaRemota.put(new Integer(id),new DatosServidor(id,ip));
-    }
-    
-    public void almacenaDestinoLocal(int id)
-    {
-        tablaLocal.put(new Integer(id),new DatosServidor(id,"127.0.0.1"));
-    }
-    
-    public void eliminaDestinoLocal(int id)
-    {
-        tablaLocal.remove(new Integer(id));
-    }
-    
-    public void almacenaServidor(Servidor srv)
-    {
-        servidores.add(srv);
-    }
-    public void eliminaServidor(Servidor srv)
-    {
-        servidores.remove(srv);
-    }
-    
-   
-    
-    public Micronucleo getMe()
-    {
-        return this;
-    }
-    public boolean send(int idDestino,String IP,byte[] msg)
-    {
-        DatosServidor datos;
-        if (tablaLocal.containsKey(new Integer(idDestino)))
-	{
-           
-            try 
-            {
-                ipServidor = InetAddress.getByName("127.0.0.1");
-            } catch (UnknownHostException ex) 
-            {
-                new Aviso(this,"No se puede obtener el destino",0);
-                return false;
-            }
-        }
-	else
-	{
-            if (tablaRemota.containsKey(new Integer(idDestino)))
-            {
-        	datos=(DatosServidor)tablaRemota.get(new Integer(idDestino));
-                try {                   
-                    ipServidor = InetAddress.getByName(datos.getIP());
-                } catch (UnknownHostException ex) {
-                    new Aviso(this,"No se puede obtener el destino",0);
-                }
-            }
-            else
-            {
-                try
-        	{
-                    ipServidor = InetAddress.getByName(IP);                   
-                }catch (UnknownHostException ex) 
-                {
-                    new Aviso(this,"No se puede obtener el destino",0);
-                    return false;
-                }
-          	datos=new DatosServidor(idDestino,ipServidor.getHostAddress());
-                tablaRemota.put(new Integer(idDestino),datos);
-            }
-            
-        }
-        DatagramPacket dp = new DatagramPacket (msg,msg.length,ipServidor,RECEPCION);
-            try {
-                 dsSend.send(dp);
-                } catch (IOException ex) {
-                    new Aviso(this,"Error al enviar el mensaje por la red",0);
-                    return false;
-                }
-         return true;
-    }
-    public Mensaje receive(int id, byte mensaje[])
-    {
-	DatagramPacket dp = new DatagramPacket(mensaje, mensaje.length);
-        ProcesoEspera espera = new ProcesoEspera(id,null);
-        recibePaquetes.poner(espera);
-        synchronized(espera)
-        {
-            try
-            {
-                espera.wait();
-                return espera.getMensaje();
-                
-            } catch(Exception e){}
-        }  
-        return null;
-    }
-    public String[] getMachineIP() 
-    {
-        Enumeration en=null;
-        List<String> datos=new ArrayList<String>();
-             try {
-                 en = NetworkInterface.getNetworkInterfaces();
-                 while(en.hasMoreElements()){
-                     NetworkInterface ni=(NetworkInterface) en.nextElement();
-                     Enumeration ee = ni.getInetAddresses();
-                     while(ee.hasMoreElements()) {
-                         InetAddress ia= (InetAddress) ee.nextElement();
-                         if (!ia.getHostAddress().contains(":")){
-                             datos.add(ia.getHostAddress());
-                         }
-                     }
-
-             }
-             } catch (SocketException ex) {}
-             String[] tmp;
-             tmp=new String[datos.size()];
-             for(int i=0;i<tmp.length;i++)
-                 tmp[i]=datos.get(i);
-             return tmp;
-    }
-
-    public String getIP()
-    {
-        return cmbIP.getItemAt(cmbIP.getSelectedIndex());
-    }
-    public boolean buscar(String nombre)
-    {
-        Servidor tmp;
-        for (int i = 0; i < servidores.size(); i++) 
-        {
-            tmp=servidores.get(i);
-            if (tmp.getNombre().equalsIgnoreCase(nombre))
-                return true;
-        }
-        return false;
-    }
+    private ArrayList<Cliente> clientes;
+    private AudioFilePlayer fondo;
+    private boolean[] reglas={false,false,false,false};
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -274,12 +68,18 @@ public class Micronucleo extends javax.swing.JFrame
         lblIP = new javax.swing.JLabel();
         cmbIP = new javax.swing.JComboBox<>();
         lblVersion = new javax.swing.JLabel();
+        lblSonido = new javax.swing.JLabel();
         lblFondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setIconImage(new ImageIcon(getClass().getResource("imagenes/fondos/logo.png")).getImage());
         setUndecorated(true);
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
         getContentPane().setLayout(null);
 
         btnSalir.setBackground(new java.awt.Color(230, 7, 12));
@@ -369,13 +169,24 @@ public class Micronucleo extends javax.swing.JFrame
         );
 
         getContentPane().add(pnlRed);
-        pnlRed.setBounds(10, 10, 210, 67);
+        pnlRed.setBounds(10, 10, 210, 56);
 
         lblVersion.setFont(new java.awt.Font("Britannic Bold", 0, 14)); // NOI18N
         lblVersion.setForeground(new java.awt.Color(255, 255, 255));
         lblVersion.setText("VERSION 0.1 (Solo fines educativos)");
         getContentPane().add(lblVersion);
         lblVersion.setBounds(20, 340, 240, 15);
+
+        lblSonido.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSonido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/otros/sonido.png"))); // NOI18N
+        lblSonido.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblSonido.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblSonidoMouseClicked(evt);
+            }
+        });
+        getContentPane().add(lblSonido);
+        lblSonido.setBounds(20, 280, 50, 50);
 
         lblFondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unodistribuido/imagenes/fondos/micronucleo.jpg"))); // NOI18N
         getContentPane().add(lblFondo);
@@ -384,10 +195,93 @@ public class Micronucleo extends javax.swing.JFrame
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public Micronucleo() 
+    {
+        boolean ban=false;
+        initComponents();
+        abrirConf();
+        servidores=new ArrayList<>();
+        clientes=new ArrayList<>();
+        
+        try
+        {
+            dsReceive = new DatagramSocket(RECEPCION);
+            dsReceive.setSoTimeout(3000);
+        } catch(SocketException se)
+        {
+              new Aviso(this,"No se puede iniciar mas de una vez el juego!",1);
+              ban=true;
+        }
+        try
+        {
+            dsSend = new DatagramSocket(ENVIO);
+            ipServidor = InetAddress.getByName("127.0.0.1");                   
+        } catch(SocketException | UnknownHostException se)
+        {
+              new Aviso(this,"No se puede iniciar mas de una vez el juego!",1);
+              ban=true;
+        }   
+        recibePaquetes=new RecibePaquetes(dsReceive,this);
+        tablaLocal=new Hashtable();
+        tablaRemota=new Hashtable();
+        cmbIP.setModel( new javax.swing.DefaultComboBoxModel(getMachineIP()));
+        setSize(716,358);
+        Toolkit tk=Toolkit.getDefaultToolkit();
+        Dimension d=tk.getScreenSize();
+        setLocation((d.width-getSize().width)/2,(d.height-getSize().height)/2);
+        
+        this.addWindowListener(new WindowAdapter(){
+                @Override
+                public  void windowClosing(WindowEvent e)
+		{
+			tablaLocal.clear();
+			tablaRemota.clear();
+			recibePaquetes.paraHilo();
+			System.exit(0);
+		}
+        });
+         
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                initialClick = e.getPoint();
+                getComponentAt(initialClick);
+            }
+        });
+        
+        addMouseMotionListener(new MouseMotionAdapter() {
+        @Override
+        public void mouseDragged(MouseEvent e) {
+
+            // get location of Window
+            int thisX = getMe().getLocation().x;
+            int thisY = getMe().getLocation().y;
+
+            // Determine how much the mouse moved since the initial click
+            int xMoved = e.getX() - initialClick.x;
+            int yMoved = e.getY() - initialClick.y;
+
+            // Move window to this position
+            int X = thisX + xMoved;
+            int Y = thisY + yMoved;
+            getMe().setLocation(X, Y);
+        }
+    });
+         
+        if(!ban)
+        {
+            fondo=new AudioFilePlayer(getClass().getResource("sonidos/fondo.wav"),this,-1);
+            setVisible(true);
+            recibePaquetes.start();
+        }
+        
+    } 
+    
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         tablaLocal.clear();
 	tablaRemota.clear();
 	recibePaquetes.paraHilo();
+        cerrarTodo();
         System.exit(0);
     }//GEN-LAST:event_btnSalirActionPerformed
 
@@ -404,21 +298,295 @@ public class Micronucleo extends javax.swing.JFrame
          if(evt.getStateChange() == ItemEvent.SELECTED) 
          {
              Servidor tmp;
-             for (int i = 0; i < servidores.size(); i++) 
-             {
-                tmp=servidores.get(i);
-                tmp.setIP(getIP());
+             for (Servidor servidore : servidores) {
+                 tmp = servidore;
+                 tmp.setIP(getIP());
              }
          }
              
     }//GEN-LAST:event_cmbIPItemStateChanged
 
     private void btnOpcionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpcionesActionPerformed
-        
-        new Opciones(this);        
-      
+        new Opciones(this);
     }//GEN-LAST:event_btnOpcionesActionPerformed
 
+    private void lblSonidoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblSonidoMouseClicked
+        cambiaImagenSonido();
+        
+    }//GEN-LAST:event_lblSonidoMouseClicked
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        cerrarTodo();
+    }//GEN-LAST:event_formWindowClosing
+    
+    private void abrirConf()
+    {
+        File conf=new File("config.ini");
+        if (conf.exists())
+        {
+            FileInputStream s;    
+            try {
+                s = new FileInputStream("config.ini");
+                BufferedReader br = new BufferedReader(new InputStreamReader(s));
+                try {
+                    String cad=br.readLine();
+                    for (int i = 0; i < 4; i++) 
+                        reglas[i]=cad.charAt(i)=='1';
+                    br.close();
+                } catch (IOException ex) {
+
+                }
+            } catch (FileNotFoundException ex) {}
+            
+        }
+        else
+        {
+            try {
+                conf.createNewFile();
+            } catch (IOException ex) {
+            }
+            FileWriter fichero = null;
+            PrintWriter pw = null;
+            try
+            {
+                fichero = new FileWriter("config.ini");
+                pw = new PrintWriter(fichero);
+                pw.println("00001");
+
+            } catch (Exception e) {
+            } finally {
+               try {
+               if (null != fichero)
+                  fichero.close();
+               } catch (Exception e2) {
+               }
+            }
+        }
+        
+    }
+    
+    public void guardarConf()
+    {
+        File conf=new File("config.ini");
+        if (!conf.exists())
+        {
+            try {
+                conf.createNewFile();
+            } catch (IOException ex) {
+            }
+        }
+        
+            FileWriter fichero = null;
+            PrintWriter pw = null;
+            try
+            {
+                String cad="";
+                fichero = new FileWriter("config.ini");
+                pw = new PrintWriter(fichero);
+                for (int i = 0; i < reglas.length; i++) {
+                    if(reglas[i])
+                        cad+="1";
+                    else
+                        cad+="0";
+                }
+                cad+="1";
+                pw.println(cad);
+
+            } catch (Exception e) {
+            } finally {
+               try {
+               if (null != fichero)
+                  fichero.close();
+               } catch (Exception e2) {
+               }
+            }
+        
+    }
+    
+    public boolean[] getReglas()
+    {
+        return reglas;
+    }
+    
+    public void almacenaDestinoRemoto(String ip, int id)
+    {
+        tablaRemota.put(id,new DatosServidor(id,ip));
+    }
+    
+    public void almacenaDestinoLocal(int id)
+    {
+        tablaLocal.put(id,new DatosServidor(id,"127.0.0.1"));
+    }
+    
+    public void eliminaDestinoLocal(int id)
+    {
+        tablaLocal.remove(id);
+    }
+    
+    public void almacenaServidor(Servidor srv)
+    {
+        servidores.add(srv);
+    }
+    public void eliminaServidor(Servidor srv)
+    {
+        servidores.remove(srv);
+    }
+    public void almacenaCliente(Cliente c)
+    {
+        clientes.add(c);
+    }
+    public void eliminaCliente(Cliente c)
+    {
+        clientes.remove(c);
+    }
+    
+    public AudioFilePlayer getPlayer()
+    {
+        return fondo;
+    }
+    protected void cambiaImagenSonido()
+    {  
+        if (fondo.getSonando())
+        {
+            fondo.detener();
+            lblSonido.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/nosonido.png")));
+        }
+        else
+        {
+            fondo.play();
+            lblSonido.setIcon(new ImageIcon(getClass().getResource("imagenes/otros/sonido.png")));
+        }
+        for (Cliente c:clientes)
+            c.cambiaImagenSonido();
+        for (Servidor s:servidores)
+            s.cambiaImagenSonido();
+        
+        
+    }
+    public void cerrarTodo()
+    {
+        while(!clientes.isEmpty())
+        {
+            Cliente c=clientes.get(0);
+            clientes.remove(0);
+            
+        }
+        while(!servidores.isEmpty())
+        {
+            Servidor c=servidores.get(0);
+            servidores.remove(0);
+            c.cerrar();
+        }
+    }
+    public Micronucleo getMe()
+    {
+        return this;
+    }
+    public boolean send(int idDestino,String IP,byte[] msg)
+    {
+        DatosServidor datos;
+        if (tablaLocal.containsKey(idDestino))
+	{
+           
+            try 
+            {
+                ipServidor = InetAddress.getByName("127.0.0.1");
+            } catch (UnknownHostException ex) 
+            {
+                new Aviso(this,"No se puede obtener el destino",0);
+                return false;
+            }
+        }
+	else
+	{
+            if (tablaRemota.containsKey(idDestino))
+            {
+        	datos=(DatosServidor)tablaRemota.get(idDestino);
+                try {                   
+                    ipServidor = InetAddress.getByName(datos.getIP());
+                } catch (UnknownHostException ex) {
+                    new Aviso(this,"No se puede obtener el destino",0);
+                }
+            }
+            else
+            {
+                try
+        	{
+                    ipServidor = InetAddress.getByName(IP);                   
+                }catch (UnknownHostException ex) 
+                {
+                    new Aviso(this,"No se puede obtener el destino",0);
+                    return false;
+                }
+          	datos=new DatosServidor(idDestino,ipServidor.getHostAddress());
+                tablaRemota.put(idDestino,datos);
+            }
+            
+        }
+        dp = new DatagramPacket (msg,msg.length,ipServidor,RECEPCION);
+        try {
+                dsSend.send(dp);
+        } catch (IOException ex) {
+                new Aviso(this,"Error al enviar el mensaje por la red",0);
+                return false;
+        }
+        return true;
+    }
+    public Mensaje receive(int id, byte mensaje[])
+    {
+	ProcesoEspera espera = new ProcesoEspera(id,null);
+        recibePaquetes.poner(espera);
+        synchronized(espera)
+        {
+            try
+            {
+                espera.wait();
+                return espera.getMensaje();
+                
+            } catch(Exception e){}
+        }  
+        return null;
+    }
+    public final String[] getMachineIP() 
+    {
+        Enumeration en;
+        List<String> datos=new ArrayList<>();
+             try {
+                 en = NetworkInterface.getNetworkInterfaces();
+                 while(en.hasMoreElements()){
+                     NetworkInterface ni=(NetworkInterface) en.nextElement();
+                     Enumeration ee = ni.getInetAddresses();
+                     while(ee.hasMoreElements()) {
+                         InetAddress ia= (InetAddress) ee.nextElement();
+                         if (!ia.getHostAddress().contains(":")){
+                             datos.add(ia.getHostAddress());
+                         }
+                     }
+
+             }
+             } catch (SocketException ex) {}
+             String[] tmp;
+             tmp=new String[datos.size()];
+             for(int i=0;i<tmp.length;i++)
+                 tmp[i]=datos.get(i);
+             return tmp;
+    }
+
+    public String getIP()
+    {
+        return cmbIP.getItemAt(cmbIP.getSelectedIndex());
+    }
+    public boolean buscar(String nombre)
+    {
+        Servidor tmp;
+        for (Servidor servidore : servidores) {
+            tmp = servidore;
+            if (tmp.getNombre().equalsIgnoreCase(nombre))
+                return true;
+        }
+        return false;
+    }
+    
   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCliente;
@@ -428,6 +596,7 @@ public class Micronucleo extends javax.swing.JFrame
     private javax.swing.JComboBox<String> cmbIP;
     private javax.swing.JLabel lblFondo;
     private javax.swing.JLabel lblIP;
+    private javax.swing.JLabel lblSonido;
     private javax.swing.JLabel lblVersion;
     private javax.swing.JPanel pnlRed;
     // End of variables declaration//GEN-END:variables

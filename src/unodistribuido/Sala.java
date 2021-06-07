@@ -5,7 +5,6 @@
  */
 package unodistribuido;
 
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -18,10 +17,11 @@ import javax.swing.ImageIcon;
  */
 public class Sala extends javax.swing.JDialog{
 
-    private Micronucleo  micronucleo;
+    private final Micronucleo  micronucleo;
     private Point initialClick;
 
     public Sala(Micronucleo micronucleo) {
+        super(micronucleo);
         initComponents();
        this.micronucleo=micronucleo;
         setSize(320,180);
@@ -29,6 +29,7 @@ public class Sala extends javax.swing.JDialog{
         this.setLocationRelativeTo(micronucleo);
         setVisible(true);
         addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 initialClick = e.getPoint();
                 getComponentAt(initialClick);

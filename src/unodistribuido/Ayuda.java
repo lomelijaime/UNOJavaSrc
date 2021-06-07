@@ -58,7 +58,6 @@ public class Ayuda extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(45, 10, 78));
         jPanel1.setForeground(new java.awt.Color(255, 255, 255));
 
-        jLabel2.setBackground(null);
         jLabel2.setFont(new java.awt.Font("Yu Gothic UI Semibold", 2, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -68,7 +67,6 @@ public class Ayuda extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("<html>Se el primero en quedarte sin cartas¡¡¡ <br> Mientras impides con las cartas especiales <br> que otros los jugadores lo hagan<html>");
 
-        jLabel3.setBackground(null);
         jLabel3.setFont(new java.awt.Font("Yu Gothic UI Semibold", 2, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -118,7 +116,6 @@ public class Ayuda extends javax.swing.JFrame {
         jPanel3.setBackground(new java.awt.Color(45, 10, 78));
         jPanel3.setForeground(new java.awt.Color(255, 255, 255));
 
-        jLabel5.setBackground(null);
         jLabel5.setFont(new java.awt.Font("Yu Gothic UI Semibold", 2, 18)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -210,7 +207,7 @@ public class Ayuda extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 76, Short.MAX_VALUE)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -271,7 +268,6 @@ public class Ayuda extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(45, 10, 78));
         jPanel2.setForeground(new java.awt.Color(255, 255, 255));
 
-        jLabel12.setBackground(null);
         jLabel12.setFont(new java.awt.Font("Yu Gothic UI Semibold", 2, 18)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(255, 255, 255));
         jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -310,7 +306,6 @@ public class Ayuda extends javax.swing.JFrame {
                 .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel15.setBackground(null);
         jLabel15.setFont(new java.awt.Font("Yu Gothic UI Semibold", 2, 18)); // NOI18N
         jLabel15.setForeground(new java.awt.Color(255, 255, 255));
         jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);

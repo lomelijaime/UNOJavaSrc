@@ -10,9 +10,9 @@ import java.util.StringTokenizer;
 public class Mensaje 
 {
     //id destino|id origen|CODOP|DATOS
-    private int idDestino,idOrigen,codop;
-    private byte[] mensaje;
-    private String msg,IP;
+    private final int idDestino,idOrigen,codop;
+    private final byte[] mensaje;
+    private final String msg,IP;
     public Mensaje(byte[] mensaje,String IP)
     {
         this.mensaje=mensaje;
